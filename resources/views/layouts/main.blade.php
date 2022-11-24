@@ -30,7 +30,7 @@
   @endif
 
   <link rel="apple-touch-icon" sizes="76x76" href="{{asset('/img/apple-icon.png')}}">
-  <link rel="icon" type="image/png" href="{{asset('/images/LOGO Centro Médico Díaz.png')}}">
+  <link rel="icon" type="image/png" href="{{asset('/images/LOGO_Centro_Medico_Diaz.png')}}">
   <title>
     ERP::CMD
   </title>

@@ -946,7 +946,8 @@ class PacienteController extends Controller
                 // $nombre = "examen_".time().".".$file->guessExtension();
                 $nombre_archivo = "examen_".$id_paciente.$id_remision.$id_expediente."_".time().".".$file->guessExtension();
 
-                $ruta = public_path("pdf/examenes_laboratorio/".$nombre_archivo);
+                //$ruta = public_path("pdf/examenes_laboratorio/".$nombre_archivo);
+                $ruta = "/home/shfnuaro/public_html/pdf/examenes_laboratorio/".$nombre_archivo;
 
                 if($file->guessExtension()=="pdf"){
                     copy($file, $ruta);
@@ -981,8 +982,8 @@ class PacienteController extends Controller
                 // $nombre = "examen_".time().".".$file->guessExtension();
                 $nombre_archivo = "archivo_".$id_paciente.$id_remision.$id_expediente."_".time().".".$file->guessExtension();
 
-                $ruta = public_path("archivos/".$nombre_archivo);
-
+                //$ruta = public_path("archivos/".$nombre_archivo);
+                $ruta = "/home/shfnuaro/public_html/archivos/".$nombre_archivo;
                 //if($file->guessExtension()=="pdf"){
                     copy($file, $ruta);
                             
@@ -1055,8 +1056,8 @@ class PacienteController extends Controller
                 // $nombre = "examen_".time().".".$file->guessExtension();
                 $nombre_archivo = "expediente_fisico_".$paciente."_".time().".".$file->guessExtension();
 
-                $ruta = public_path("pdf/expediente_fisico/".$nombre_archivo);
-
+                //$ruta = public_path("pdf/expediente_fisico/".$nombre_archivo);
+                $ruta = "/home/shfnuaro/public_html/pdf/expediente_fisico/".$nombre_archivo;
                 if($file->guessExtension()=="pdf"){
                     copy($file, $ruta);
                             
