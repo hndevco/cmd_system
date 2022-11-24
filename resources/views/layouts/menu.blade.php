@@ -152,7 +152,7 @@
             <a href="#" class="nav-link">
               <i class="nav-icon fas fa-cogs"></i>
               <p>
-                Configurar
+                CONFIGURAR
                 <i class="right fas fa-angle-left"></i>
               </p>
             </a>
@@ -247,7 +247,7 @@
             <a href="{{asset('/historial-clinico-pacientes')}}" class="nav-link">
               <i class="nav-icon fas fa-book-medical"></i>
               <p>
-                Historial Clínico
+                HISTORIAL CLÍNICO
               </p>
             </a>
           </li>
@@ -258,7 +258,7 @@
             <a href="{{asset('/archivos-pacientes')}}" class="nav-link">
               <i class="nav-icon fas fa-folder"></i>
               <p>
-                Archivos
+                ARCHIVOS
               </p>
             </a>
           </li>
