@@ -247,7 +247,7 @@
             <a href="{{asset('/historial-clinico-pacientes')}}" class="nav-link">
               <i class="nav-icon fas fa-book-medical"></i>
               <p>
-                HISTORIAL CLINICO
+                HISTORIAL CLÍNICO
               </p>
             </a>
           </li>
