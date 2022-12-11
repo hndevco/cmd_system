@@ -929,7 +929,8 @@ class PacienteController extends Controller
     public function descargar_archivo($archivo){
         //$fileName = basename('archivo_1152_1667065694.jpeg');
         //$file="";
-        $file= public_path(). "/archivos/".$archivo;
+        //$file= public_path(). "/archivos/".$archivo;
+        $file= "/home/shfnuaro/public_html/archivos/".$archivo;
         return Response::download($file);
     }
 
