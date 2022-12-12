@@ -236,43 +236,41 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <div class="input-group input-group-sm mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1">ANTECEDENTES PERSONALES PATOLÓGICOS (APP)
-                                                <!-- @if($sub_siguiente->existe == 0)
-                                                &nbsp;&nbsp;<input type="radio" name="app_radio" id="app_radio" onclick="app_radio(1)" checked aria-label="Radio button for following text input"> Si
-                                                &nbsp;&nbsp;<input type="radio" name="app_radio" id="app_radio" onclick="app_radio(0)" aria-label="Radio button for following text input"> No
-                                                @else
-                                                @endif-->
-                                                &nbsp;&nbsp;<input type="radio" name="app_radio" id="app_radio" onclick="app_radio(1)" checked aria-label="Radio button for following text input"> Si
-                                                &nbsp;&nbsp;<input type="radio" name="app_radio" id="app_radio" onclick="app_radio(0)" aria-label="Radio button for following text input"> No
-                                            </span>
-                                        </div>
-                                        <!--<input type="text" class="form-control" id="input_app" placeholder="Describa aquí" aria-label="Username" aria-describedby="basic-addon1"
-                                        @if($sub_siguiente->existe == 0)
-                                        @else disabled value="{{$consulta->antecedentes_personales_patologicos}}"
-                                        @endif
-                                        >-->
-                                        <input type="text" class="form-control" id="input_app" placeholder="Describa aquí" aria-label="Username" aria-describedby="basic-addon1" value="{{$consulta->antecedentes_personales_patologicos}}">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header bg-info">
+                                        <h5 class="card-title">
+                                            ANTECEDENTES PERSONALES PATOLÓGICOS (APP)
+                                            
+                                            &nbsp;&nbsp;<input type="radio" name="app_radio" id="app_radio" onclick="app_radio(1)" checked aria-label="Radio button for following text input"> Si
+                                            &nbsp;&nbsp;<input type="radio" name="app_radio" id="app_radio" onclick="app_radio(0)" aria-label="Radio button for following text input"> No
+                                          
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <textarea class="form-control" id="input_app" rows="3" placeholder="Describa aquí"
+                                        >{{$consulta->antecedentes_personales_patologicos}}</textarea>
+                                        
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <div class="input-group input-group-sm mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1">TRATAMIENTO (TX)
-                                                &nbsp;&nbsp;<input type="radio" name="tx_radio" id="tx_radio" onclick="tx_radio(1)" checked aria-label="Radio button for following text input"> Si
-                                                &nbsp;&nbsp;<input type="radio" name="tx_radio" id="tx_radio" onclick="tx_radio(0)" aria-label="Radio button for following text input"> No
-                                               
-                                            </span>
-                                        </div>
-                                        <input type="text" class="form-control" id="input_tx" placeholder="Describa aquí" aria-label="Username" aria-describedby="basic-addon1"
-                                    
-                                       value="{{$consulta->tratamiento_antecedentes_personales_patologicos}}"
-                                        >
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header bg-info">
+                                        <h5 class="card-title">
+                                            TRATAMIENTO (TX)
+                                            
+                                            &nbsp;&nbsp;<input type="radio" name="tx_radio" id="tx_radio" onclick="tx_radio(1)" checked aria-label="Radio button for following text input"> Si
+                                            &nbsp;&nbsp;<input type="radio" name="tx_radio" id="tx_radio" onclick="tx_radio(0)" aria-label="Radio button for following text input"> No
+                                           
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <textarea class="form-control" id="input_tx" rows="3" placeholder="Describa aquí"
+                                        >{{$consulta->tratamiento_antecedentes_personales_patologicos}}</textarea>
+                                        
                                     </div>
                                 </div>
                             </div>

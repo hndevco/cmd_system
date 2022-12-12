@@ -248,33 +248,37 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <div class="input-group input-group-sm mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1">ANTECEDENTES PERSONALES PATOLÓGICOS (APP)
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header bg-info">
+                                        <h5 class="card-title">
+                                            ANTECEDENTES PERSONALES PATOLÓGICOS (APP)
                                             @if($estado_edicion->estado_edicion == 1)
                                                 &nbsp;&nbsp;<input type="radio" name="app_radio" id="app_radio" onclick="app_radio(1)" @if($consulta_exp_pediatrico->antecedentes_personales_patologicos == null || $consulta_exp_pediatrico->antecedentes_personales_patologicos == '') @else checked @endif aria-label="Radio button for following text input"> Si
                                                 &nbsp;&nbsp;<input type="radio" name="app_radio" id="app_radio" onclick="app_radio(0)" @if($consulta_exp_pediatrico->antecedentes_personales_patologicos == null || $consulta_exp_pediatrico->antecedentes_personales_patologicos == '') checked @else @endif aria-label="Radio button for following text input"> No
                                             @endif
-                                            </span>
-                                        </div>
-                                        <input type="text" class="form-control" value="{{$consulta_exp_pediatrico->antecedentes_personales_patologicos}}" @if($estado_edicion->estado_edicion == 1 && ($consulta_exp_pediatrico->antecedentes_personales_patologicos != null || $consulta_exp_pediatrico->antecedentes_personales_patologicos != '')) @else disabled @endif id="input_app" placeholder="Describa aquí" aria-label="Username" aria-describedby="basic-addon1">
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_app" rows="3" placeholder="Describa aquí">{{$consulta_exp_pediatrico->antecedentes_personales_patologicos}}</textarea>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <div class="input-group input-group-sm mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text" id="basic-addon1">TRATAMIENTO (TX)
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header bg-info">
+                                        <h5 class="card-title">
+                                            TRATAMIENTO (TX)
                                             @if($estado_edicion->estado_edicion == 1)
                                                 &nbsp;&nbsp;<input type="radio" name="tx_radio" id="tx_radio" onclick="tx_radio(1)" @if($consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos == null || $consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos == '') @else checked @endif aria-label="Radio button for following text input"> Si
                                                 &nbsp;&nbsp;<input type="radio" name="tx_radio" id="tx_radio" onclick="tx_radio(0)" @if($consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos == null || $consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos == '') checked @else @endif aria-label="Radio button for following text input"> No
                                             @endif
-                                            </span>
-                                        </div>
-                                        <input type="text" class="form-control" value="{{$consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos}}" @if($estado_edicion->estado_edicion == 1 && ($consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos != null || $consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos != '')) @else disabled @endif id="input_tx" placeholder="Describa aquí" aria-label="Username" aria-describedby="basic-addon1">
+                                        </h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_tx" rows="3" placeholder="Describa aquí">{{$consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos}}</textarea>
                                     </div>
                                 </div>
                             </div>
