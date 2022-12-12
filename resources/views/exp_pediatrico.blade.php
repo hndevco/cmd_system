@@ -396,9 +396,14 @@
                                         </div>
                                         <select class="custom-select" id="input_tipo_sangre" 
                                         >
-                                            <option selected disabled>Elija una opcion</option>
+                                            {{-- <option selected disabled>Elija una opcion</option> --}}
                                             @foreach($tipos_sangre as $row_ts)
-                                            <option value="{{$row_ts->id}}">{{$row_ts->nombre}}</option>
+
+                                            <option value="{{$row_ts->id}}"
+                                            @if ($row_ts->id === 9)
+                                                selected
+                                            @endif
+                                            >{{$row_ts->nombre}}</option>
                                             @endforeach
                                         </select>
                                     </div>
