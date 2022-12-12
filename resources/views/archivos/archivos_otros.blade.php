@@ -35,7 +35,7 @@
                             <div class="card-tools">
                                 <ul class="nav nav-pills ml-auto">
                                     <li class="nav-item">
-                                        @if($arc_escribir_otros_archivos == '1')
+                                        @if($arc_subir_otros_archivos == '1')
                                         <button type="button" id="btn-subir-examen" class="btn btn-success" data-toggle="modal"
                                             data-target="#md-subir-examen"><i class="fas fa-upload"></i> Subir Nuevo Archivo</button>
                                         @endif
@@ -121,6 +121,7 @@
         var input_archivo = null;
         var accion = null;
         var arc_escribir_otros_archivos = "{{$arc_escribir_otros_archivos}}";
+        var arc_ver_otros_archivos = "{{$arc_ver_otros_archivos}}";
 
 
         $( document ).ready(function() {
@@ -154,13 +155,16 @@
                         render: function(data, type, row, meta) {
                             //console.table(td);
                             
-                            var btn_ver_examenes= "<a href='{{asset('archivos-descargar')}}/"+row.url_archivo+"' class='btn btn-sm btn-info' title='Descargar Archivo'><i class='fas fa-download'></i> Descargar Archivo</a>&nbsp;";
+                            var btn_descargar_archivo= '';
                             var btn_eliminar_archivoes= '';
+                            if(arc_ver_otros_archivos == 1){
+                                btn_descargar_archivo= "<a href='{{asset('archivos-descargar')}}/"+row.url_archivo+"' class='btn btn-sm btn-info' title='Descargar Archivo'><i class='fas fa-download'></i> Descargar Archivo</a>&nbsp;";
+                            }
                             if(arc_escribir_otros_archivos == 1){
                                 btn_eliminar_archivoes= "<a href='javascript:eliminar_archivo("+row.id+")' class='btn btn-sm btn-danger' id='btn_eliminar_archivo' data-id=5 title='Ver Archivo'><i class='fas fa-trash'></i> Eliminar Archivo</a>";
                             }
 
-                            return btn_ver_examenes + btn_eliminar_archivoes;
+                            return btn_descargar_archivo + btn_eliminar_archivoes;
                         }
                     }
                 ]

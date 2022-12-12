@@ -61,7 +61,7 @@
                         <i class="fas fa-book-medical"></i>
                         Historiales Médicos                        
                     </h3>
-                    @if($arc_escribir_archivos_historial_clinico_fisico == 1)
+                    @if($arc_subir_archivos_historial_clinico_fisico == 1)
                     <div class="card-tools">
                         <div class="card-tools">
                             <ul class="nav nav-pills ml-auto">
@@ -232,6 +232,7 @@
         var lab_leer_examen = "{{$lab_leer_examen}}";
         var arc_leer_otros_archivos = "{{$arc_leer_otros_archivos}}";
         var arc_escribir_archivos_historial_clinico_fisico = "{{$arc_escribir_archivos_historial_clinico_fisico}}";
+        var arc_ver_archivos_historial_clinico_fisico = "{{$arc_ver_archivos_historial_clinico_fisico}}";
         var accion = null;
 
         $( document ).ready(function() {
@@ -563,10 +564,13 @@
                                     data: null,
                                     render: function(data, type, row, meta) {
                                         //console.table(td);                           
-                                        var btn_ver_examenes= "<a target='_blank' href='{{asset('pdf/expediente_fisico')}}/"+row.url_expediente_fisico+"' class='btn btn-sm btn-info' title='Ver Expediente Fisico'><i class='fas fa-file-pdf'></i> Expediente Fisico</a>&nbsp;";
+                                        var btn_ver_examenes= '';
                                         var btn_eliminar_examenes= '';
+                                        if(arc_ver_archivos_historial_clinico_fisico == 1){
+                                            btn_ver_examenes= "<a target='_blank' href='{{asset('pdf/expediente_fisico')}}/"+row.url_expediente_fisico+"' class='btn btn-sm btn-info' title='Ver Expediente Fisico'><i class='fas fa-file-pdf'></i> Expediente Fisico</a>&nbsp;";
+                                        }
                                         if(arc_escribir_archivos_historial_clinico_fisico == 1){
-                                            btn_eliminar_examenes= "<a href='javascript:eliminar_examen("+row.id+")' class='btn btn-sm btn-danger' id='btn_eliminar_examen' data-id=5 title='Ver Expediente Fisico'><i class='fas fa-trash'></i> Eliminar Expediente Fisico</a>";
+                                            btn_eliminar_examenes= "<a href='javascript:eliminar_examen("+row.id+")' class='btn btn-sm btn-danger' id='btn_eliminar_examen' data-id=5 title='Eliminar Expediente Fisico'><i class='fas fa-trash'></i> Eliminar Expediente Fisico</a>";
                                         }
                                         
                                         return btn_ver_examenes + btn_eliminar_examenes; 

@@ -35,7 +35,7 @@
                             <div class="card-tools">
                                 <ul class="nav nav-pills ml-auto">
                                     <li class="nav-item">
-                                        @if($lab_escribir_examen == '1')
+                                        @if($lab_subir_examen == '1')
                                         <button type="button" id="btn-subir-examen" class="btn btn-success" data-toggle="modal"
                                             data-target="#md-subir-examen"><i class="fas fa-upload"></i> Subir Nuevo Exámen</button>
                                         @endif
@@ -121,6 +121,7 @@
         var input_archivo = null;
         var accion = null;
         var lab_escribir_examen = "{{$lab_escribir_examen}}";
+        var lab_ver_examen = "{{$lab_ver_examen}}";
 
 
         $( document ).ready(function() {
@@ -154,8 +155,11 @@
                         render: function(data, type, row, meta) {
                             //console.table(td);
                             
-                            var btn_ver_examenes= "<a target='_blank' href='{{asset('pdf/examenes_laboratorio')}}/"+row.url_pdf+"' class='btn btn-sm btn-info' title='Ver Exámen'><i class='fas fa-file-pdf'></i> Ver Exámen</a>&nbsp;";
+                            var btn_ver_examenes= '';
                             var btn_eliminar_examenes= '';
+                            if(lab_ver_examen == 1){
+                                btn_ver_examenes= "<a target='_blank' href='{{asset('pdf/examenes_laboratorio')}}/"+row.url_pdf+"' class='btn btn-sm btn-info' title='Ver Exámen'><i class='fas fa-file-pdf'></i> Ver Exámen</a>&nbsp;";
+                            }
                             if(lab_escribir_examen == 1){
                                 btn_eliminar_examenes= "<a href='javascript:eliminar_examen("+row.id+")' class='btn btn-sm btn-danger' id='btn_eliminar_examen' data-id=5 title='Ver Exámen'><i class='fas fa-trash'></i> Eliminar Exámen</a>";
                             }

@@ -329,6 +329,8 @@ class PacienteController extends Controller
         $arc_leer_archivos_historial_clinico_digital = session('arc_leer_archivos_historial_clinico_digital');
         $arc_leer_archivos_historial_clinico_fisico = session('arc_leer_archivos_historial_clinico_fisico');
         $arc_escribir_archivos_historial_clinico_digital = session('arc_escribir_archivos_historial_clinico_digital');
+        $arc_ver_archivos_historial_clinico_fisico = session('arc_ver_archivos_historial_clinico_fisico');
+        $arc_subir_archivos_historial_clinico_fisico = session('arc_subir_archivos_historial_clinico_fisico');
         $arc_escribir_archivos_historial_clinico_fisico = session('arc_escribir_archivos_historial_clinico_fisico');
         $arc_leer_otros_archivos = session('arc_leer_otros_archivos');
         $arc_escribir_otros_archivos = session('arc_escribir_otros_archivos');
@@ -366,6 +368,8 @@ class PacienteController extends Controller
                 ->with("arc_leer_archivos_historial_clinico_fisico", $arc_leer_archivos_historial_clinico_fisico)
                 ->with("arc_escribir_archivos_historial_clinico_digital", $arc_escribir_archivos_historial_clinico_digital)
                 ->with("arc_escribir_archivos_historial_clinico_fisico", $arc_escribir_archivos_historial_clinico_fisico)
+                ->with("arc_ver_archivos_historial_clinico_fisico", $arc_ver_archivos_historial_clinico_fisico)
+                ->with("arc_subir_archivos_historial_clinico_fisico", $arc_subir_archivos_historial_clinico_fisico)
                 ->with("arc_leer_otros_archivos", $arc_leer_otros_archivos)
                 ->with("arc_escribir_otros_archivos", $arc_escribir_otros_archivos)
                 ;
@@ -814,6 +818,9 @@ class PacienteController extends Controller
 
     public function ver_examenes($id_paciente, $id_remision, $id_expediente){
         $lab_escribir_examen = session('lab_escribir_examen');
+        $lab_ver_examen = session('lab_ver_examen');
+        $lab_subir_examen = session('lab_subir_examen');
+        
         if(session('lab_leer_examen')!='1'){
             return view('error');
         }
@@ -854,11 +861,15 @@ class PacienteController extends Controller
             ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]))->first();
 
         return view('historial_clinico.examenes_laboratorio')->with("paciente" , $paciente)->with("id_paciente", $id_paciente)
-                ->with("id_remision", $id_remision)->with("id_expediente", $id_expediente)->with("lab_escribir_examen", $lab_escribir_examen);
+                ->with("id_remision", $id_remision)->with("id_expediente", $id_expediente)->with("lab_escribir_examen", $lab_escribir_examen)
+                ->with("lab_ver_examen", $lab_ver_examen)
+                ->with("lab_subir_examen", $lab_subir_examen);
     }
 
     public function ver_otros_archios($id_paciente, $id_remision, $id_expediente){
         $arc_escribir_otros_archivos = session('arc_escribir_otros_archivos');
+        $arc_ver_otros_archivos = session('arc_ver_otros_archivos');
+        $arc_subir_otros_archivos = session('arc_subir_otros_archivos');
         if(session('arc_leer_otros_archivos')!='1'){
             return view('error');
         }
@@ -899,7 +910,9 @@ class PacienteController extends Controller
             ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]))->first();
 
         return view('archivos.archivos_otros')->with("paciente" , $paciente)->with("id_paciente", $id_paciente)
-                ->with("id_remision", $id_remision)->with("id_expediente", $id_expediente)->with("arc_escribir_otros_archivos", $arc_escribir_otros_archivos);
+                ->with("id_remision", $id_remision)->with("id_expediente", $id_expediente)->with("arc_escribir_otros_archivos", $arc_escribir_otros_archivos)
+                ->with("arc_ver_otros_archivos", $arc_ver_otros_archivos)
+                ->with("arc_subir_otros_archivos", $arc_subir_otros_archivos);
     }
 
     public function historial_examenes_laboratorio($id_paciente, $id_remision, $id_expediente){
