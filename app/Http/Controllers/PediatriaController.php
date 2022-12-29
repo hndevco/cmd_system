@@ -36,4 +36,53 @@ class PediatriaController extends Controller
             
         return response()->json(["sql_percentil_infante_masculino"=>$sql_percentil_infante_masculino]);
     }
+    public function guardar_percentiles_infantes(Request $request){
+        $msgSuccess = null;
+        $msgError = null;
+        $msgWarning = null;
+        $id_percentil = null;
+        $id_remision =  $request->id_remision;
+        $edad = floatval($request->edad);
+        $peso = floatval($request->peso);
+        $altura = floatval($request->altura);
+        
+        $sql_percentil = DB::SELECT("
+            SELECT id from pediatria.pd_percentiles_infantes
+            WHERE deleted_at is null AND id_remision = :id_remision 
+        ", ["id_remision" =>$id_remision]);
+
+        foreach($sql_percentil as $row){
+            $id_percentil = $row->id;
+        }
+        
+        //throw new Exception($id_percentil);
+        
+        try{
+            if($id_percentil == null || $id_percentil = ''){
+                $sql=DB::SELECT("
+                    INSERT INTO pediatria.pd_percentiles_infantes
+                        (id_remision, edad, peso, altura)
+                    VALUES (:id_remision, :edad, :peso, :altura)
+                ", ["id_remision"=>$id_remision, "edad"=>$edad, "peso"=>$peso, "altura"=>$altura]);
+                $msgSuccess = "¡Los datos se han guardado correctamente!";
+            }else{
+            //throw new Exception($altura);
+            $sql= DB::SELECT("
+                    UPDATE pediatria.pd_percentiles_infantes
+                        SET edad =:edad, peso =:peso, altura =:altura, updated_at = now()
+                    WHERE id_remision = :id_remision  
+                ",["id_remision" =>$id_remision, "edad"=>$edad, "peso"=>$peso, "altura"=>$altura]);
+                
+                $msgSuccess = "¡Los datos se han actualizado correctamente!";
+
+            }
+    
+            
+        }catch(Execption $e){
+            
+            $msgError=$e->getMessage();
+        }
+
+        return response()->json(["msgSuccess"=>$msgSuccess, "msgError"=>$msgError]);
+    }
 }

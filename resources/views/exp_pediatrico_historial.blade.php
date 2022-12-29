@@ -35,6 +35,12 @@
                                     @else<i class="fas fa-check"></i> 
                                     @endif
                                     {{$estado_edicion->estado}} </span></div>
+                                <hr>
+                                <button type="button" class="btn btn-info btn-sm btn-block"
+                                    data-toggle="modal" data-target="#exampleModalCenter">
+                                        <i class="fas fa-chart-bar"></i>
+                                        Curva de Crecimiento
+                                </button>
                                 <!--<div class="bg-primary color-palette"><a type="button" href="{{url('/historial-clinico/paciente/')}}/{{$paciente->id}}" class="btn btn-block btn-primary btn-xs"><i class="fas fa-arrow-left"></i> Volver a Historial Clínco</a></div>-->
                             </div>
                         </center> 
@@ -890,8 +896,11 @@
         </div>
     </div>
 </div>
+{{-- Modal historial curva crecimiento --}}
+@include('pediatria.modal_percentiles')
 @endsection
 @section("scripts")
+
 
 <script type="text/javascript">
     var url_guardar_expediente = "{{url('/exp/pediatrico/paciente')}}/guardar";
@@ -1884,5 +1893,6 @@
     }
 
 </script>
+@include('pediatria.grafica_percentil_infante_masculino')
 @endsection
 

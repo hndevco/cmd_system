@@ -452,7 +452,8 @@ class PacienteController extends Controller
                  end sexo, 
              rfp.domicilio, rfp.telefono, rfp.identidad, 
              to_char(r.created_at,'TMDay')||', '||to_char( r.created_at ,'dd')||' de '||to_char(r.created_at,'TMMonth')||' de '||to_char(r.created_at,'yyyy') fecha,
-             to_char(r.created_at, 'HH12:MI AM') hora
+             to_char(r.created_at, 'HH12:MI AM') hora,
+             extract(YEAR FROM age(now()::DATE ,fecha_nacimiento::DATE))*12 + extract(MONTH FROM age (to_char(now(), 'YYYY/MM/DD')::DATE, fecha_nacimiento::DATE)) meses
              from reg_ficha_pacientes rfp 
              join tbl_remisiones r on rfp.id = r.id_paciente
              where rfp.deleted_at is null and r.deleted_at is null
@@ -568,6 +569,12 @@ class PacienteController extends Controller
                 rm.id_paciente = :id_paciente and rm.id_expediente = :id_expediente and rm.id_remision = :id_remision
             ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
             
+            $hisotirial_percentil = collect(\DB::SELECT("
+                    SELECT id_remision, edad, peso, altura
+                        from pediatria.pd_percentiles_infantes
+                    WHERE id_remision = :id_remision
+            ", ["id_remision"=>$id_remision]))->first();
+
             return view("exp_pediatrico_historial")->with("id_remision", $id_remision)
                 ->with("paciente" , $paciente)->with("receta", $receta)->with("tipos_sangre", $tipos_sangre)
                 ->with("indice_masa_corporal", $indice_masa_corporal)->with("tipos_partos", $tipos_partos)
@@ -577,7 +584,8 @@ class PacienteController extends Controller
                 ->with("lactancia", $lactancia)->with("exa_fisico_diagnostico_indicaciones", $exa_fisico_diagnostico_indicaciones)
                 ->with("consulta_exp_pediatrico_hea_mc", $consulta_exp_pediatrico_hea_mc)/*->with("lactancia_alimentacion_actual", $lactancia_alimentacion_actual)*/
                 ->with("sub_siguiente", $sub_siguiente)
-                ->with("medico", $medico);
+                ->with("medico", $medico)
+                ->with("historial_percentil", $hisotirial_percentil);
         }
         //Finaliza Expediente pediátrico
 

@@ -59,6 +59,9 @@ function validardatospercentiles(peso, edad, altura){
             }); 
             return false;
         }
+
+		guardar_percentiles_infantes(peso, edad, altura);
+		
         return true;
 };
 
@@ -513,4 +516,44 @@ function comparativa05(peso,talla) {
 	
 	document.getElementById("divMensajesC").innerHTML = "<P>"+mensaje+"</P>";
 }
+
+function guardar_percentiles_infantes(peso, edad, altura){
+	//console.log(peso + edad + altura);
+	var url_save_percentiles = "{{Route('guardar_percentiles_infantes')}}";
+	var id_remision =  {{$id_remision}};
+
+	$.ajax({
+		type: "POST",
+		url: url_save_percentiles,
+		data: {
+			"id_remision": id_remision,
+			"edad": edad,
+			"peso": peso,
+			"altura": altura
+		},
+		success: function (data) {
+			if (data.msgError != null) {
+                    titleMsg = "Error";
+                    textMsg = data.msgError;
+                    typeMsg = "error";
+                    
+                } else {
+                    titleMsg = "Exito";
+                    textMsg = data.msgSuccess;
+                    typeMsg = "success";
+                }
+
+                new PNotify({
+                    title: titleMsg,
+                    text: textMsg,
+                    type: typeMsg,
+                    shadow: true
+                });
+		},
+		error: function (xhr, status, error) {
+                alert(xhr.responseText);
+        }
+	});
+}
+
 </script>

@@ -111,6 +111,7 @@ Route::post("/farmacia/paciente_atendido_receta", [FarmaciaController::class, "p
 
 //Inicia modulo grafico curva by ardon
 Route::get("/pediatria/data/percetiles/infantes/masculinos/estatura-edad", [PediatriaController::class, "get_data_percentiles_infantes_masculinos_estatura_edad"])->name("get_data_percentiles_infantes_masculinos_estatura_edad");
+Route::post("/pediatria/guardar/percentiles/infantes", [PediatriaController::class, "guardar_percentiles_infantes"])->name("guardar_percentiles_infantes");
 //Finaliza modulo grafico curva by ardon
 
 //Inicia archivos Matute

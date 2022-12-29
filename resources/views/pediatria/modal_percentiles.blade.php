@@ -52,7 +52,7 @@
                                         <label for="peso">
                                             Peso (en Kg):
                                         </label>
-                                        <input id="peso" class="form-control" max="24" maxlength="4" min="1" name="peso" required="required" size="5" step="0.1" type="number">
+                                        <input id="peso" class="form-control" max="24" maxlength="4" min="1" name="peso" required="required" size="5" step="0.1" type="number" value="{{$historial_percentil->peso ?? 0}}">
                                         
                                         <small id="helpId" class="text-muted">Ingrese el de peso (kg) del infante</small>
                                         {{-- <div id="divMensajesP" class="alert alert-danger"></div> --}}
@@ -66,7 +66,7 @@
                                         <label for="edad">
                                             Edad (en meses):
                                         </label>
-                                        <input id="edad" class="form-control" max="60" maxlength="2" min="0" name="edad" required="required" size="5" type="number" value="{{$paciente->meses}}">
+                                        <input id="edad" class="form-control" max="60" maxlength="2" min="0" name="edad" required="required" size="5" type="number" value="{{$historial_percentil->edad ?? $paciente->meses}}">
                                         
                                         <small id="helpId" class="text-muted">Ingrese el de edad (meses) del infante</small>
                                     </div>
@@ -77,7 +77,7 @@
                                         <label for="altura">
                                             Altura (en cm):
                                         </label>
-                                        <input id="altura" class="form-control" max="120" maxlength="3" min="45" name="altura" required="required" size="5" type="number">
+                                        <input id="altura" class="form-control" max="120" maxlength="3" min="45" name="altura" required="required" size="5" type="number" value="{{$historial_percentil->altura ?? 0}}">
                                         
                                         <small id="helpId" class="text-muted">Ingrese la altura (cm) del infante</small>
                                     </div>
