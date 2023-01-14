@@ -1139,7 +1139,7 @@
                 validar = validar * 1;
             }
 
-            if(glucometria == null || glucometria == ''){
+            /*if(glucometria == null || glucometria == ''){
                 $('#input_glocometria').removeClass('form-control').addClass('form-control is-invalid');
                 //validar = validar * 0;
                 campo = "Glucometria";
@@ -1148,7 +1148,7 @@
             }else{
                 $('#input_glocometria').removeClass('form-control is-invalid').addClass('form-control is-valid');
                 validar = validar * 1;
-            }
+            }*/
 
             if(indice_masa_corporal == null || indice_masa_corporal == ''){
                 $('#input_indice_masa_corporal').removeClass('form-control').addClass('form-control is-invalid');
