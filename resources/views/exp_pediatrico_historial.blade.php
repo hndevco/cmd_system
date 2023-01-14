@@ -266,7 +266,7 @@
                                         </h5>
                                     </div>
                                     <div class="card-body">
-                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_app" rows="3" placeholder="Describa aquí">{{$consulta_exp_pediatrico->antecedentes_personales_patologicos}}</textarea>
+                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($consulta_exp_pediatrico->antecedentes_personales_patologicos != null || $consulta_exp_pediatrico->antecedentes_personales_patologicos != '')) @else disabled @endif id="input_app" rows="3" placeholder="Describa aquí">{{$consulta_exp_pediatrico->antecedentes_personales_patologicos}}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -284,7 +284,7 @@
                                         </h5>
                                     </div>
                                     <div class="card-body">
-                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_tx" rows="3" placeholder="Describa aquí">{{$consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos}}</textarea>
+                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos != null || $consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos != '')) @else disabled @endif id="input_tx" rows="3" placeholder="Describa aquí">{{$consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos}}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -348,7 +348,7 @@
                                         </h5>
                                     </div>
                                     <div class="card-body">
-                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_alergias" rows="3" placeholder="Describa aquí">{{$consulta_exp_pediatrico->tipo_alergia }}</textarea>
+                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($consulta_exp_pediatrico->tipo_alergia  != null || $consulta_exp_pediatrico->tipo_alergia != '')) @else disabled @endif id="input_alergias" rows="3" placeholder="Describa aquí">{{$consulta_exp_pediatrico->tipo_alergia }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -418,7 +418,7 @@
                                         </h5>
                                     </div>
                                     <div class="card-body">
-                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_enfer_durante_embarazo" rows="3" placeholder="Describa las enfermedades">{{$consulta_exp_pediatrico->tipo_alergia}}</textarea>
+                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($consulta_exp_pediatrico->tipo_alergia  != null || $consulta_exp_pediatrico->tipo_alergia != '')) @else disabled @endif id="input_enfer_durante_embarazo" rows="3" placeholder="Describa las enfermedades">{{$consulta_exp_pediatrico->tipo_alergia}}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -564,7 +564,7 @@
                                         </h5>
                                     </div>
                                     <div class="card-body">
-                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_complicaciones_parto" rows="3" placeholder="¿Qué complicaciones presentó?">{{$natalicio->complicaciones_parto}}</textarea>
+                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($natalicio->complicaciones_parto != null || $natalicio->complicaciones_parto != '')) @else disabled @endif id="input_complicaciones_parto" rows="3" placeholder="¿Qué complicaciones presentó?">{{$natalicio->complicaciones_parto}}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -649,7 +649,7 @@
                                                 </h5>
                                             </div>
                                             <div class="card-body">
-                                                <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_escolaridad_actual" rows="3" placeholder="¿Cual escolaridad?">{{$desarrollo_psicomotor->escolaridad_actual}}</textarea>
+                                                <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($desarrollo_psicomotor->escolaridad_actual != null || $desarrollo_psicomotor->escolaridad_actual != '')) @else disabled @endif id="input_escolaridad_actual" rows="3" placeholder="¿Cual escolaridad?">{{$desarrollo_psicomotor->escolaridad_actual}}</textarea>
                                             </div>
                                         </div>
                                     </div>
