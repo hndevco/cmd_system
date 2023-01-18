@@ -203,6 +203,8 @@
                 <div class="card card-default">
                     <div class="card-header bg-primary">
                         <h3 class="card-title">ANTECEDENTES GINECO-OBSTÉTRICOS</h3>
+                        &nbsp;&nbsp;<input type="radio" name="ets_radio" id="ets_radio" onclick="myFunction(0)"  aria-label="Radio button for following text input"> No
+                        &nbsp;&nbsp;<input type="radio" name="ets_radio" id="ets_radio" onclick="myFunction(1)" checked aria-label="Radio button for following text input"> Si
                         <div class="card-tools">
                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
                                 <i class="fas fa-minus"></i>
@@ -212,7 +214,7 @@
                             </button>-->
                         </div>
                     </div>
-                    <div class="card-body" style="display: block;">
+                    <div class="card-body" style="display: block;" id="ocultar">
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
@@ -1161,214 +1163,215 @@
                 validar = validar * 1;
             }
 
-            if(gestas == null || gestas == ''){
-                $('#input_gestas').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "Gestas";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_gestas').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if(gestas == null || gestas == ''){
+            //     $('#input_gestas').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "Gestas";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_gestas').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
 
-            if(partos == null || partos == ''){
-                $('#input_partos').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "Partos";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_partos').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if(partos == null || partos == ''){
+            //     $('#input_partos').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "Partos";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_partos').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
 
-            if(cesareas == null || cesareas == ''){
-                $('#input_cesareas').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "Cesareas";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_cesareas').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if(cesareas == null || cesareas == ''){
+            //     $('#input_cesareas').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "Cesareas";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_cesareas').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
+            
 
-            if(abortos == null || abortos == ''){
-                $('#input_abortos').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "Abortos";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_abortos').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if(abortos == null || abortos == ''){
+            //     $('#input_abortos').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "Abortos";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_abortos').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
 
-            if(hijos_vivos == null || hijos_vivos == ''){
-                $('#input_hijos_vivos').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "Hijos Vivos";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_hijos_vivos').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if(hijos_vivos == null || hijos_vivos == ''){
+            //     $('#input_hijos_vivos').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "Hijos Vivos";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_hijos_vivos').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
 
-            if(hijos_muertos == null || hijos_muertos == ''){
-                $('#input_hijos_muertos').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "Hijos Muertos";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_hijos_muertos').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if(hijos_muertos == null || hijos_muertos == ''){
+            //     $('#input_hijos_muertos').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "Hijos Muertos";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_hijos_muertos').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
 
-            if(fecha_ultimo_parto == null || fecha_ultimo_parto == ''){
-                $('#input_fecha_ultimo_parto').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "Fecha Ultimo Parto";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_fecha_ultimo_parto').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if(fecha_ultimo_parto == null || fecha_ultimo_parto == ''){
+            //     $('#input_fecha_ultimo_parto').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "Fecha Ultimo Parto";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_fecha_ultimo_parto').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
 
-            if(atendido == null || atendido == ''){
-                $('#input_atendido').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "Atendido";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_atendido').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if(atendido == null || atendido == ''){
+            //     $('#input_atendido').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "Atendido";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_atendido').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
 
-            if($("#input_fum").prop('disabled') == false && (fecha_ultima_menstruacion == null || fecha_ultima_menstruacion == '')){
-                $('#input_fum').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "Fecha Ultima Menstruacion";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_fum').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if($("#input_fum").prop('disabled') == false && (fecha_ultima_menstruacion == null || fecha_ultima_menstruacion == '')){
+            //     $('#input_fum').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "Fecha Ultima Menstruacion";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_fum').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
 
-            if($("#input_fpp").prop('disabled') == false && (fpp == null || fpp == '')){
-                $('#input_fpp').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "FPP";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_fpp').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if($("#input_fpp").prop('disabled') == false && (fpp == null || fpp == '')){
+            //     $('#input_fpp').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "FPP";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_fpp').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
 
-            if(citologia == null || citologia == ''){
-                $('#input_citologia').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "Citologia";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_citologia').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if(citologia == null || citologia == ''){
+            //     $('#input_citologia').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "Citologia";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_citologia').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
 
-            if($("#input_pf").prop('disabled') == false && (planificacion_familiar == null || planificacion_familiar == '')){
-                $('#input_pf').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "Planifiacion Familiar";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_pf').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if($("#input_pf").prop('disabled') == false && (planificacion_familiar == null || planificacion_familiar == '')){
+            //     $('#input_pf').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "Planifiacion Familiar";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_pf').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
 
-            if(tipo_sangre == null || tipo_sangre == ''){
-                $('#input_tipo_sangre').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "Tipo de Sangre";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_tipo_sangre').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if(tipo_sangre == null || tipo_sangre == ''){
+            //     $('#input_tipo_sangre').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "Tipo de Sangre";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_tipo_sangre').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
 
-            if($("#input_vaginosis").prop('disabled') == false && (vaginosis == null || vaginosis == '')){
-                $('#input_vaginosis').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "Vaginosis";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_vaginosis').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if($("#input_vaginosis").prop('disabled') == false && (vaginosis == null || vaginosis == '')){
+            //     $('#input_vaginosis').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "Vaginosis";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_vaginosis').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
 
-            if($("#input_itu").prop('disabled') == false && (infeccion_tracto_urinario == null || infeccion_tracto_urinario == '')){
-                $('#input_itu').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "Infeccion del Tracto Urinario";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_itu').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if($("#input_itu").prop('disabled') == false && (infeccion_tracto_urinario == null || infeccion_tracto_urinario == '')){
+            //     $('#input_itu').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "Infeccion del Tracto Urinario";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_itu').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
 
-            if($("#input_prurito").prop('disabled') == false && (prurito == null || prurito == '')){
-                $('#input_prurito').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "Prurito";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_prurito').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if($("#input_prurito").prop('disabled') == false && (prurito == null || prurito == '')){
+            //     $('#input_prurito').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "Prurito";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_prurito').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
 
-            if($("#input_menarquia").prop('disabled') == false && (menarquia == null || menarquia == '')){
-                $('#input_menarquia').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "Menarquia";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_menarquia').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if($("#input_menarquia").prop('disabled') == false && (menarquia == null || menarquia == '')){
+            //     $('#input_menarquia').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "Menarquia";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_menarquia').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
 
-            if($("#input_ivs").prop('disabled') == false && (inicio_vida_sexual == null || inicio_vida_sexual == '')){
-                $('#input_ivs').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "Inicio de Vida Sexual";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_ivs').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if($("#input_ivs").prop('disabled') == false && (inicio_vida_sexual == null || inicio_vida_sexual == '')){
+            //     $('#input_ivs').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "Inicio de Vida Sexual";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_ivs').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
 
-            if(numero_parejas_sexuales == null || numero_parejas_sexuales == ''){
-                $('#input_numero_parejas_sexuales').removeClass('form-control').addClass('form-control is-invalid');
-                //validar = validar * 0;
-                campo = "Numero de Parejas Sexuales";
-                notificacion_validar_campos(campo);
-                return false;
-            }else{
-                $('#input_numero_parejas_sexuales').removeClass('form-control is-invalid').addClass('form-control is-valid');
-                validar = validar * 1;
-            }
+            // if(numero_parejas_sexuales == null || numero_parejas_sexuales == ''){
+            //     $('#input_numero_parejas_sexuales').removeClass('form-control').addClass('form-control is-invalid');
+            //     //validar = validar * 0;
+            //     campo = "Numero de Parejas Sexuales";
+            //     notificacion_validar_campos(campo);
+            //     return false;
+            // }else{
+            //     $('#input_numero_parejas_sexuales').removeClass('form-control is-invalid').addClass('form-control is-valid');
+            //     validar = validar * 1;
+            // }
 
             if($("#input_ets").prop('disabled') == false && (enfermedad_transmision_sexual == null || enfermedad_transmision_sexual == '')){
                 $('#input_ets').removeClass('form-control').addClass('form-control is-invalid');
@@ -1890,6 +1893,20 @@
                 alert(xhr.responseText);
             }
         });
+    }
+
+</script>
+
+<script>
+    function myFunction() {
+      var x = document.getElementById("ocultar");
+      if (x.style.display === "none") {
+        x.style.display = "block";
+        $('#input_gestas').attr('disabled', false);
+      } else {
+        x.style.display = "none";
+        $('#input_gestas').attr('disabled', true).val('');
+      }
     }
 
 </script>
