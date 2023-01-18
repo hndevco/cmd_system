@@ -382,7 +382,7 @@ class PacienteController extends Controller
         ac.nombre area, concat(p.primer_nombre,' ', p.primer_apellido) medico from tbl_remisiones r
         join tbl_areas_clinica ac on r.id_area = ac.id
         join per_empleado p on r.id_medico = p.id
-        where r.id_paciente = :id_paciente /*and r.id_estado_remision = 5*/ and r.id_estado_remision not in (1,2) and r.deleted_at is null
+        where r.id_paciente = :id_paciente /*and r.id_estado_remision = 5 and r.id_estado_remision not in (1,2)*/ and r.deleted_at is null
         order by r.created_at desc
         ", ["id_paciente" => $id_paciente]);
 

@@ -126,7 +126,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">T°</span>
                                         </div>
-                                        <input type="number" value="{{$signos_vitales->temperatura}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="C°" id="input_temperatura" aria-label="Username" aria-describedby="basic-addon1" autofocus>
+                                        <input type="number" value="{{$signos_vitales->temperatura}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="Describa" id="input_temperatura" aria-label="Username" aria-describedby="basic-addon1" autofocus>
                                     </div>
                                 </div>
                             </div>
@@ -146,7 +146,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">PESO</span>
                                         </div>
-                                        <input type="number" value="{{$signos_vitales->peso}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="kg" id="input_peso" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" value="{{$signos_vitales->peso}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="Describa" id="input_peso" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -240,7 +240,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">GESTAS (G)</span>
                                         </div>
-                                        <input type="number" value="{{$ginecologia->gestas}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="C°" id="input_gestas" aria-label="Username" aria-describedby="basic-addon1" required>
+                                        <input type="number" value="{{$ginecologia->gestas}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="Describa" id="input_gestas" aria-label="Username" aria-describedby="basic-addon1" required>
                                     </div>
                                 </div>
                             </div>
@@ -250,7 +250,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">PARTOS (P)</span>
                                         </div>
-                                        <input type="number" value="{{$ginecologia->partos}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_partos" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" value="{{$ginecologia->partos}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_partos" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -260,7 +260,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">CESAREAS (C)</span>
                                         </div>
-                                        <input type="number" value="{{$ginecologia->cesareas}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_cesareas" placeholder="kg" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" value="{{$ginecologia->cesareas}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_cesareas" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -282,7 +282,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">HIJOS VIVOS (HV)</span>
                                         </div>
-                                        <input type="number" value="{{$ginecologia->hijos_vivos}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_hijos_vivos" placeholder="kg" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" value="{{$ginecologia->hijos_vivos}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_hijos_vivos" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -292,7 +292,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">HIJOS MUERTOS (HM)</span>
                                         </div>
-                                        <input type="number" value="{{$ginecologia->hijos_muertos}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_hijos_muertos" placeholder="kg" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" value="{{$ginecologia->hijos_muertos}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_hijos_muertos" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -302,7 +302,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">FECHA ÚLTIMO PARTO (FUP)</span>
                                         </div>
-                                        <input type="date" value="{{$ginecologia->fecha_parto}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_fecha_ultimo_parto" placeholder="kg" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="date" value="{{$ginecologia->fecha_parto}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_fecha_ultimo_parto" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -314,7 +314,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">ATENDIDO</span>
                                         </div>
-                                        <input type="text" value="{{$ginecologia->atendido}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_atendido" placeholder="kg" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" value="{{$ginecologia->atendido}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_atendido" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -332,7 +332,7 @@
                                                 @endif
                                             </span>
                                         </div>
-                                        <input type="date" value="{{$ginecologia->fecha_ultima_mestruacion}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->fecha_ultima_mestruacion != null || $ginecologia->fecha_ultima_mestruacion != '')) @else disabled @endif class="form-control" id="input_fum" placeholder="kg" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="date" value="{{$ginecologia->fecha_ultima_mestruacion}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->fecha_ultima_mestruacion != null || $ginecologia->fecha_ultima_mestruacion != '')) @else disabled @endif class="form-control" id="input_fum" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -347,7 +347,7 @@
                                                 @endif
                                             </span>
                                         </div>
-                                        <input type="date" value="{{$ginecologia->fecha_provable_parto}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->fecha_provable_parto != null || $ginecologia->fecha_provable_parto != '')) @else disabled @endif class="form-control" id="input_fpp"  placeholder="kg" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="date" value="{{$ginecologia->fecha_provable_parto}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->fecha_provable_parto != null || $ginecologia->fecha_provable_parto != '')) @else disabled @endif class="form-control" id="input_fpp"  placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -359,7 +359,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">CITOLOGIA</span>
                                         </div>
-                                        <input type="text" value="{{$ginecologia->citologia}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_citologia" placeholder="kg" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" value="{{$ginecologia->citologia}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_citologia" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -376,7 +376,7 @@
                                                 @endif
                                             </span>
                                         </div>
-                                        <input type="text" value="{{$ginecologia->descripcion_planificacion_familiar}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->descripcion_planificacion_familiar != null || $ginecologia->descripcion_planificacion_familiar != '')) @else disabled @endif class="form-control" id="input_pf" placeholder="kg" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" value="{{$ginecologia->descripcion_planificacion_familiar}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->descripcion_planificacion_familiar != null || $ginecologia->descripcion_planificacion_familiar != '')) @else disabled @endif class="form-control" id="input_pf" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -408,7 +408,7 @@
                                                 @endif
                                             </span>
                                         </div>
-                                        <input type="text" value="{{$ginecologia->descripcion_vaginosis}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->descripcion_vaginosis != null || $ginecologia->descripcion_vaginosis != '')) @else disabled @endif class="form-control" id="input_vaginosis" placeholder="kg" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" value="{{$ginecologia->descripcion_vaginosis}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->descripcion_vaginosis != null || $ginecologia->descripcion_vaginosis != '')) @else disabled @endif class="form-control" id="input_vaginosis" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -425,7 +425,7 @@
                                                 @endif
                                             </span>
                                         </div>
-                                        <input type="text" value="{{$ginecologia->descripcion_infeccion_tracto_urinario}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->descripcion_infeccion_tracto_urinario != null || $ginecologia->descripcion_infeccion_tracto_urinario != '')) @else disabled @endif class="form-control" id="input_itu" placeholder="kg" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" value="{{$ginecologia->descripcion_infeccion_tracto_urinario}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->descripcion_infeccion_tracto_urinario != null || $ginecologia->descripcion_infeccion_tracto_urinario != '')) @else disabled @endif class="form-control" id="input_itu" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -442,7 +442,7 @@
                                                 @endif
                                             </span>
                                         </div>
-                                        <input type="text" value="{{$ginecologia->descripcion_prurito}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->descripcion_prurito != null || $ginecologia->descripcion_prurito != '')) @else disabled @endif class="form-control" id="input_prurito" placeholder="kg" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" value="{{$ginecologia->descripcion_prurito}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->descripcion_prurito != null || $ginecologia->descripcion_prurito != '')) @else disabled @endif class="form-control" id="input_prurito" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -459,7 +459,7 @@
                                                 @endif
                                             </span>
                                         </div>
-                                        <input type="text" value="{{$ginecologia->descripcion_menarquia}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->descripcion_menarquia != null || $ginecologia->descripcion_menarquia != '')) @else disabled @endif class="form-control" id="input_menarquia" placeholder="kg" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" value="{{$ginecologia->descripcion_menarquia}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->descripcion_menarquia != null || $ginecologia->descripcion_menarquia != '')) @else disabled @endif class="form-control" id="input_menarquia" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -476,7 +476,7 @@
                                                 @endif
                                             </span>
                                         </div>
-                                        <input type="number" value="{{$ginecologia->edad_inicio_vida_sexual}}" @if($estado_edicion->estado_edicion == 1&& ($ginecologia->edad_inicio_vida_sexual != null || $ginecologia->edad_inicio_vida_sexual != '')) @else disabled @endif class="form-control" id="input_ivs" placeholder="Años" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" value="{{$ginecologia->edad_inicio_vida_sexual}}" @if($estado_edicion->estado_edicion == 1&& ($ginecologia->edad_inicio_vida_sexual != null || $ginecologia->edad_inicio_vida_sexual != '')) @else disabled @endif class="form-control" id="input_ivs" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -486,7 +486,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">NÚMERO DE PAREJAS SEXUALES (NPS)</span>
                                         </div>
-                                        <input type="number" value="{{$ginecologia->numero_parejas_sexuales}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_numero_parejas_sexuales" placeholder="Años" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" value="{{$ginecologia->numero_parejas_sexuales}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_numero_parejas_sexuales" placeholder="Cantidad" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -516,7 +516,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">VIDA SEXUAL ACTIVA (VSA)</span>
                                         </div>
-                                        <input type="text" value="{{$ginecologia->vida_sexual_activa}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_vida_sexual_activa" placeholder="Años" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" value="{{$ginecologia->vida_sexual_activa}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_vida_sexual_activa" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -533,7 +533,7 @@
                                                 @endif
                                             </span>
                                         </div>
-                                        <input type="text" value="{{$ginecologia->tipo_antecendestes_personales_patologicos}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->tipo_antecendestes_personales_patologicos != null || $ginecologia->tipo_antecendestes_personales_patologicos != '')) @else disabled @endif class="form-control" id="input_app" placeholder="Años" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" value="{{$ginecologia->tipo_antecendestes_personales_patologicos}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->tipo_antecendestes_personales_patologicos != null || $ginecologia->tipo_antecendestes_personales_patologicos != '')) @else disabled @endif class="form-control" id="input_app" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -548,7 +548,7 @@
                                                 @endif
                                             </span>
                                         </div>
-                                        <input type="text" value="{{$ginecologia->afp}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->afp != null || $ginecologia->afp != '')) @else disabled @endif class="form-control" id="input_afp" placeholder="Años" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" value="{{$ginecologia->afp}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->afp != null || $ginecologia->afp != '')) @else disabled @endif class="form-control" id="input_afp" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -565,7 +565,7 @@
                                                 @endif
                                             </span>
                                         </div>
-                                        <input type="text" value="{{$ginecologia->tipo_antecedentes_inmunoalergicos}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->tipo_antecedentes_inmunoalergicos != null || $ginecologia->tipo_antecedentes_inmunoalergicos != '')) @else disabled @endif class="form-control" id="input_aia" placeholder="Años" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" value="{{$ginecologia->tipo_antecedentes_inmunoalergicos}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->tipo_antecedentes_inmunoalergicos != null || $ginecologia->tipo_antecedentes_inmunoalergicos != '')) @else disabled @endif class="form-control" id="input_aia" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -580,7 +580,7 @@
                                                 @endif
                                             </span>
                                         </div>
-                                        <input type="text" value="{{$ginecologia->habitos}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->habitos != null || $ginecologia->habitos != '')) @else disabled @endif class="form-control" id="input_habitos"  placeholder="Años" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" value="{{$ginecologia->habitos}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->habitos != null || $ginecologia->habitos != '')) @else disabled @endif class="form-control" id="input_habitos"  placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -597,7 +597,7 @@
                                                 @endif
                                             </span>
                                         </div>
-                                        <input type="text" value="{{$ginecologia->tipos_antecedentes_hospitalarios_quirurgicos}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->tipos_antecedentes_hospitalarios_quirurgicos != null || $ginecologia->tipos_antecedentes_hospitalarios_quirurgicos != '')) @else disabled @endif class="form-control" id="input_AHxTxQx" placeholder="Años" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" value="{{$ginecologia->tipos_antecedentes_hospitalarios_quirurgicos}}" @if($estado_edicion->estado_edicion == 1 && ($ginecologia->tipos_antecedentes_hospitalarios_quirurgicos != null || $ginecologia->tipos_antecedentes_hospitalarios_quirurgicos != '')) @else disabled @endif class="form-control" id="input_AHxTxQx" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -654,7 +654,7 @@
                                             <span class="input-group-text" id="basic-addon1">HISTORIA DE ENFERMEDAD ACTUAL (HEA)</span>
 
                                         </div>
-                                        <input type="text" value="{{$ginecologia_mc_hea->historia_enfermedad_actual}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_historia_enfermedad_actual" placeholder="Años" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" value="{{$ginecologia_mc_hea->historia_enfermedad_actual}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_historia_enfermedad_actual" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -793,7 +793,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">PROXIMA CITA</span>
                                         </div>
-                                        <input type="date" value="{{$examen_fisico->proxima_cita}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_proxima_cita" placeholder="C°" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="date" value="{{$examen_fisico->proxima_cita}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_proxima_cita" placeholder="Describa" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
