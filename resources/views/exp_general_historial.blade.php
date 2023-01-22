@@ -704,7 +704,7 @@
                     <div class="col-lg-12">
                         <div class="btn-group w-100">
                         <a type="button" href="{{url('/historial-clinico/paciente/')}}/{{$paciente->id}}" class="btn btn-primary col start"><i class="fas fa-arrow-left"></i> Volver a Historial Clínco</a>
-                        <!-- comment <button type="button" id="btn_imprimir" class="btn btn-primary" data-dismiss="modal">Imprimir</button>-->
+                        <a class="btn btn-primary" href="{{url('/reporte/medicina-general/paciente/'.$paciente->id.'/remision/'.$receta->id_remision.'/expediente/'.$id_expediente)}}" title='Reporte'>Imprimir</a>
                         @if($estado_edicion->estado_edicion == 1)
                             <button type="submit" class="btn btn-warning col start" id="btn_editar_expediente">
                                 <i class="fas fa-save"></i>
@@ -728,6 +728,7 @@
     var campo = null;
     var accion = 2;
     var id_paciente = {{$paciente->id}};
+    var id_expediente = {{$id_expediente}};
     //inicio signos vitales
     var temperatura = null;
     var presion_arteria = null;
@@ -781,7 +782,7 @@
         $("#btn_imprimir").on('click', function( e ){
             e.preventDefault();
 
-            printDiv();
+            ver_reporte_word();
 
         });
 
@@ -1355,20 +1356,132 @@
         });
     }
 
-    function printDiv() {
-        //var divContents = document.getElementById("GFG").innerHTML;
+  //const { PDFDocument, StandardFonts, rgb } = PDFLib
         
-        var divContents = document.getElementById("card_sv").innerHTML;
-        b = $("#input_temperatura").val();
+    function print_exp() {
         
+// Default export is a4 paper, portrait, using millimeters for units
+window.jsPDF = window.jspdf.jsPDF;
+const doc = new jsPDF();
             
-        var a = window.open('', '', 'height=500, width=500');
-        a.document.write('<html>');
-        a.document.write('<body > <h1>Div contents are <br>');
-        a.document.write( divContents );
-        a.document.write('</body></html>');
-        a.document.close();
-        a.print();
+var {
+  ComboBox,
+  ListBox,
+  CheckBox,
+  PushButton,
+  TextField,
+  PasswordField,
+  RadioButton,
+  Appearance
+} = jsPDF.AcroForm;
+
+
+doc.setFontSize(25);
+doc.setFont("times", "normal");
+doc.text("Centro Médico Díaz", 105, 20, null, null, "center");
+doc.setFontSize(15);
+doc.text("General", 105, 27, null, null, "center");
+
+doc.setFontSize(20);
+doc.text("Signos Vitales", 20, 80);
+doc.setLineWidth(0.5);
+doc.line(20, 81, 195, 81);
+doc.setFontSize(15);
+doc.text("Temperatura: 45", 20, 86);
+doc.text("Presión Arterial: 15", 65, 86);
+doc.text("Peso: 15", 120, 86);
+doc.text("Talla: 15", 150, 86);
+
+doc.text("Saturación: 45", 20, 91);
+doc.text("Frecuencia Cardiaca: 15", 65, 91);
+doc.text("Frecuencia Respitaroria: 15", 127, 91);
+doc.text("Glucometria: 15", 20, 97);
+
+doc.setFontSize(20);
+doc.text("Antecedentes Generales", 20, 110);
+doc.setLineWidth(0.5);
+doc.line(20, 111, 195, 111);
+doc.setFontSize(15);
+doc.text("Glasgow: 45", 20, 116);
+doc.text("Actividad Ocular (AO): 15", 65, 116);
+doc.text("Respuesta Verbal (RV): 15", 137, 116);
+doc.text("Respuesta Motora (RM): 15", 20, 122);
+
+doc.text("Estado de Conciencia", 25, 135);
+doc.setLineWidth(0.5);
+doc.line(20, 136, 195, 136);
+doc.text("Alerta: Si", 20, 141);
+doc.text("Somnoliento: Si", 55, 141);
+doc.text("Estupor: Si", 105, 141);
+doc.text("Coma: Si", 145, 141);
+
+doc.text("Antecedentes", 25, 151);
+doc.setLineWidth(0.5);
+doc.line(20, 152, 195, 152);
+doc.text("Antecedentes Patológicos Personales (APP): Si", 20, 157);
+doc.text("Antecedentes Familiares Patológicos (AFP): Si", 20, 162);
+
+doc.text("Antecendetes Ginecológicos (AGO)", 25, 172);
+doc.setLineWidth(0.5);
+doc.line(20, 173, 195, 173);
+doc.text("Gestas (G): Si", 20, 178);
+doc.text("Partos (P): Si", 70, 178);
+doc.text("Cesareas (C): Si", 117, 178);
+
+doc.text("Fecha Ultima Menstruación (FUM): 2022/02/02", 20, 192);
+doc.text("Antecedentes Inmunoalergicos (AIA):", 20, 197);
+var textField = new TextField();
+textField.Rect = [20, 198, 175, 30];
+textField.multiline = true;
+textField.value =
+  "The quick The ick brown brown fox ate the lazy ate the lazyate the lazyate the lazy mouse The quick brown fox ate the lazy mouse"; //
+textField.readOnly = true;
+textField.fontSize = 15;
+textField.fontStyle = 'times';
+textField.fieldName = "TestTextBox1";
+doc.addField(textField);
+
+doc.text("Habitos:", 20, 215);
+var textField = new TextField();
+textField.Rect = [20, 216, 175, 30];
+textField.multiline = true;
+textField.value =
+  "The quick The ick brown brown fox ate the lazy ate the lazyate the lazyate the lazy mouse The quick brown fox ate the lazy mouse"; //
+textField.readOnly = true;
+textField.fontSize = 15;
+textField.fontStyle = 'times';
+textField.fieldName = "TestTextBox2";
+doc.addField(textField);
+
+doc.text("Antecedentes Hospitalarios Y Quirúrgicos (AHxTxQx):", 20, 233);
+var textField = new TextField();
+textField.Rect = [20, 234, 175, 30];
+textField.multiline = true;
+textField.value =
+  "The quick The ick brown brown fox ate the lazy ate the lazyate the lazyate the lazy mouse The quick brown fox ate the lazy mouse"; //
+textField.readOnly = true;
+textField.fontSize = 15;
+textField.fontStyle = 'times';
+textField.fieldName = "TestTextBox3";
+doc.addField(textField);
+
+doc.text("Motivo De La Consulta (MC):", 20, 251);
+doc.setLineWidth(0.5);
+doc.line(20, 252, 195, 252);
+var textField = new TextField();
+textField.Rect = [20, 253, 175, 30];
+textField.multiline = true;
+textField.value =
+  "The quick The ick brown brown fox ate the lazy ate the lazyate the lazyate the lazy mouse The quick brown fox ate the lazy mouse"; //
+textField.readOnly = true;
+textField.fontSize = 15;
+textField.fontStyle = 'times';
+textField.fieldName = "TestTextBox4";
+doc.addField(textField);
+
+doc.text("Pag. 1/3", 200, 290, null, null, "right");
+
+doc.save("a4.pdf");
     }
 
 </script>

@@ -126,7 +126,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">T°</span>
                                         </div>
-                                        <input type="number" value="{{$signos_vitales->temperatura}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="Describa" id="input_temperatura" aria-label="Username" aria-describedby="basic-addon1" autofocus>
+                                        <input type="number" value="{{$signos_vitales->temperatura}}"  @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="Describa" id="input_temperatura" aria-label="Username" aria-describedby="basic-addon1" autofocus>
                                     </div>
                                 </div>
                             </div>
@@ -883,6 +883,7 @@
                         <div class="col-lg-12">
                             <div class="btn-group w-100">
                             <a type="button" href="{{url('/historial-clinico/paciente/')}}/{{$paciente->id}}" class="btn btn-primary col start"><i class="fas fa-arrow-left"></i> Volver a Historial Clínco</a>
+                            <a class="btn btn-primary" href="{{url('/reporte/ginecologico/paciente/'.$paciente->id.'/remision/'.$receta->id_remision.'/expediente/'.$id_expediente)}}" title='Reporte'>Imprimir</a>
                             @if($estado_edicion->estado_edicion == 1)
                                 <button type="submit" class="btn btn-warning col start" id="btn_editar_expediente">
                                     <i class="fas fa-save"></i>

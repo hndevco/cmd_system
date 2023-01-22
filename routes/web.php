@@ -54,6 +54,10 @@ Route::post("/configuraciones/usuario/cambio-calve/guardar", [EmpleadoController
 //fin empleado y permisos de usuario
 
 Route::get("/reporte/hola-mundo",[ReportesController::class, "ver_reporte_hola_mundo"]);
+Route::get("/reporte/word",[ReportesController::class, "ver_reporte_word"]);
+Route::get("/reporte/medicina-general/paciente/{id_paciente}/remision/{id_remision}/expediente/{id_expediente}",[ReportesController::class, "ver_reporte_medicina_general"]);
+Route::get("/reporte/pediatria/paciente/{id_paciente}/remision/{id_remision}/expediente/{id_expediente}",[ReportesController::class, "ver_reporte_pediatrico"]);
+Route::get("/reporte/ginecologico/paciente/{id_paciente}/remision/{id_remision}/expediente/{id_expediente}",[ReportesController::class, "ver_reporte_ginecologico"]);
 
 //Inicia Matute expediente ginecologico, pediatrico
 Route::get("/exp_ginecologico/id_remision/{id_remision}/paciente/{id_paciente}", [ExpGinecologicoController::class, "ver_expediente_ginecologico"]);

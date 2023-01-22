@@ -585,7 +585,8 @@ class PacienteController extends Controller
                 ->with("consulta_exp_pediatrico_hea_mc", $consulta_exp_pediatrico_hea_mc)/*->with("lactancia_alimentacion_actual", $lactancia_alimentacion_actual)*/
                 ->with("sub_siguiente", $sub_siguiente)
                 ->with("medico", $medico)
-                ->with("historial_percentil", $hisotirial_percentil);
+                ->with("historial_percentil", $hisotirial_percentil)
+                ->with("id_expediente" , $id_expediente);
         }
         //Finaliza Expediente pediátrico
 
@@ -696,7 +697,8 @@ class PacienteController extends Controller
                 ->with("consulta_exp_general", $consulta_exp_general)
                 ->with("receta", $receta)
                 ->with("estado_edicion_subsiguiente", $estado_edicion_subsiguiente)
-                ->with("medico", $medico);
+                ->with("medico", $medico)
+                ->with("id_expediente" , $id_expediente);
         }
 
         //Inicia Expediente ginecológico
@@ -773,7 +775,7 @@ class PacienteController extends Controller
                 from tbl_signos_vitales
                 where id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision and deleted_at is null
             ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
-
+                      
             $ginecologia_mc_hea = collect(\DB::select("
                 SELECT motivo_cosulta, motivo_cosulta_semanas_gestionales, motivo_cosulta_examenes, nota_motivo_cosulta, historia_enfermedad_actual
                 FROM public.tbl_exp_ginecologia_mc_hea
@@ -817,7 +819,8 @@ class PacienteController extends Controller
                 ->with("tipos_sangre", $tipos_sangre)->with("indice_masa_corporal", $indice_masa_corporal)
                 ->with("estado_edicion", $estado_edicion)->with("signos_vitales", $signos_vitales)->with("estado_edicion_subsiguiente", $estado_edicion_subsiguiente)
                 ->with("ginecologia", $ginecologia)->with("examen_fisico", $examen_fisico)->with("receta", $receta)
-                ->with("sub_siguiente", $sub_siguiente)->with("ginecologia_mc_hea", $ginecologia_mc_hea);
+                ->with("sub_siguiente", $sub_siguiente)->with("ginecologia_mc_hea", $ginecologia_mc_hea)
+                ->with("id_expediente" , $id_expediente);
         }
         //Finaliza Expediente ginecológico
 
