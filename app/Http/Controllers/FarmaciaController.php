@@ -90,7 +90,7 @@ class FarmaciaController extends Controller
             join per_empleado p on rm.id_medico = p.id
             join tbl_cargos c on p.id_cargo = c.id
             join cat_dias_semana ds on ds.id_dia_bd::text = to_char(rm.created_at::date,'D')
-            join cat_meses_anio ma on ma.id_mes_bd = to_char( rm.created_at::date,'MM')
+            join cat_meses_anio ma on ma.id_mes_bd::integer = to_char( rm.created_at::date,'MM')::integer
             where rm.id = :id_receta and rm.deleted_at is null
         ", ["id_receta" => $id_receta]))->first();
 
