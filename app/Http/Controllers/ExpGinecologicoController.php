@@ -100,7 +100,7 @@ class ExpGinecologicoController extends Controller
         $msgSuccess = null;
         $msgError = null;
         $id_paciente = $request->id_paciente;
-        $id_medico = Auth()->id();
+        $id_medico = null;
         $id_remision = $request->id_remision;
         $accion = $request->accion;
         $estado_expediente = $request->estado_expediente;
@@ -167,6 +167,15 @@ class ExpGinecologicoController extends Controller
 
         DB::beginTransaction();
         try{ 
+            //inicia deducir medico
+            $id_medico = collect(\DB::select("
+            select ep.id
+                        from public.users u
+                        join public.per_empleado ep on u.id = ep.id_usuario
+                        join public.tbl_cargos c on ep.id_cargo = c.id
+                        where u.id = :id_user and ep.deleted_at is null
+            ", ["id_user" => Auth()->id()]))->first();
+            //finaliza deducir medico
         //Inicia deducir expediente
         $expediente = collect(\DB::select("SELECT te.id from tbl_remisiones r
             join tbl_areas_clinica ac on r.id_area = ac.id
