@@ -30,7 +30,7 @@ class HomeController extends Controller
 
         $pacientes_registrados_lista = DB::select("select count(1) numero_registros , to_char( fp.created_at::date, 'YYYY-MM') fecha_registra, ma.nombre_espanol mes_registro
         from public.reg_ficha_pacientes fp
-        join cat_meses_anio ma on ma.id_mes_bd = to_char( fp.created_at::date,'MM')
+        join public.cat_meses_anio ma on ma.id_mes_bd::integer = (to_char( fp.created_at::date,'MM'))::integer
         where fp.deleted_at is null
         group by 2, 3
         order by 2");
@@ -53,10 +53,10 @@ class HomeController extends Controller
         where deleted_at is null");
         
         $pacientes_region_procedencia = db::select("select count(1) pacientes, id_departamento, d.cod_departamento 
-from public.reg_ficha_pacientes fp
-join public.tbl_departamentos d ON d.id = fp.id_departamento
-where fp.deleted_at is null
-group by 2, 3");
+        from public.reg_ficha_pacientes fp
+        join public.tbl_departamentos d ON d.id = fp.id_departamento
+        where fp.deleted_at is null
+        group by 2, 3");
         
         return view('dashboardHome')
             ->with("pacientes_registrados_lista", $pacientes_registrados_lista)
