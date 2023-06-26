@@ -163,6 +163,8 @@ class ExpGeneralController extends Controller
         $proxima_cita = $request -> proxima_cita;
         //fin medicina general
         $receta = $request->receta;
+        $tbl_mg_medicina_general = null;
+        $id_mg_medicina_general = null;
 
         DB::beginTransaction();
         try{ 
@@ -183,6 +185,17 @@ class ExpGeneralController extends Controller
          ", ["id_remision" => $id_remision]))->first();
          $id_expediente = $expediente->id;
          //Finaliza deducir expediente
+         
+        $tbl_mg_medicina_general = collect(\DB::select("select * from public.tbl_mg_medicina_general
+        where id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
+         ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+        
+        $id_mg_medicina_general = isset($tbl_mg_medicina_general->id) ? $tbl_mg_medicina_general->id : null ;
+        
+        if($id_mg_medicina_general == null && $accion != 1){
+            $accion == 1;
+        }
+        
          if($accion == 1){
         /* INCIO INSERT A LA TABLA DE SIGNOS VITALES */    
         DB::select("INSERT into tbl_signos_vitales 

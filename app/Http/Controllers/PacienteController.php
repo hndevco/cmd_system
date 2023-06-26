@@ -586,7 +586,9 @@ class PacienteController extends Controller
                 ->with("sub_siguiente", $sub_siguiente)
                 ->with("medico", $medico)
                 ->with("historial_percentil", $hisotirial_percentil)
-                ->with("id_expediente" , $id_expediente);
+                ->with("id_expediente" , $id_expediente)
+                ->with("id_remision" , $id_remision)
+                    ;
         }
         //Finaliza Expediente pediátrico
 
@@ -698,7 +700,9 @@ class PacienteController extends Controller
                 ->with("receta", $receta)
                 ->with("estado_edicion_subsiguiente", $estado_edicion_subsiguiente)
                 ->with("medico", $medico)
-                ->with("id_expediente" , $id_expediente);
+                ->with("id_expediente" , $id_expediente)
+                ->with("id_remision" , $id_remision)
+                    ;
         }
 
         //Inicia Expediente ginecológico
@@ -820,7 +824,9 @@ class PacienteController extends Controller
                 ->with("estado_edicion", $estado_edicion)->with("signos_vitales", $signos_vitales)->with("estado_edicion_subsiguiente", $estado_edicion_subsiguiente)
                 ->with("ginecologia", $ginecologia)->with("examen_fisico", $examen_fisico)->with("receta", $receta)
                 ->with("sub_siguiente", $sub_siguiente)->with("ginecologia_mc_hea", $ginecologia_mc_hea)
-                ->with("id_expediente" , $id_expediente);
+                ->with("id_expediente" , $id_expediente)
+                ->with("id_remision" , $id_remision)
+                        ;
         }
         //Finaliza Expediente ginecológico
 

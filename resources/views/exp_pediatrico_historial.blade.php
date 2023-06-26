@@ -103,7 +103,7 @@
                     <div class="col-md-3 col-sm-3">
                         <h5>
                             Médico: 
-                                <small class="text-muted"><ins>{{$receta->nombre}}</ins></small>
+                                <small class="text-muted"><ins>{{ $receta == null ? null : $receta->nombre }}</ins></small>
                         </h5>
                     </div>
                 </div>
@@ -129,7 +129,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">T°</span>
                                         </div>
-                                        <input type="number" value="{{$signos_vitales->temperatura}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="C°" id="input_temperatura" aria-label="Username" aria-describedby="basic-addon1" autofocus>
+                                        <input type="number" value="{{$signos_vitales == null ? null : $signos_vitales->temperatura}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="C°" id="input_temperatura" aria-label="Username" aria-describedby="basic-addon1" autofocus>
                                     </div>
                                 </div>
                             </div>
@@ -139,7 +139,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">PA</span>
                                         </div>
-                                        <input type="text" value="{{$signos_vitales->presion_arterial}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="mmHg" id="input_presion_arterial" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" value="{{$signos_vitales == null ? null : $signos_vitales->presion_arterial}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="mmHg" id="input_presion_arterial" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -149,7 +149,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">PESO</span>
                                         </div>
-                                        <input type="number" value="{{$signos_vitales->peso}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="kg" id="input_peso" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" value="{{$signos_vitales == null ? null : $signos_vitales->peso}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="kg" id="input_peso" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -159,7 +159,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">TALLA</span>
                                         </div>
-                                        <input type="number" value="{{$signos_vitales->talla}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="m" id="input_talla" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" value="{{$signos_vitales == null ? null : $signos_vitales->talla}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="m" id="input_talla" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -171,7 +171,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">SAT</span>
                                         </div>
-                                        <input type="number" value="{{$signos_vitales->saturacion}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="%" id="input_saturacion" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" value="{{$signos_vitales == null ? null : $signos_vitales->saturacion}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="%" id="input_saturacion" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -181,7 +181,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">FC</span>
                                         </div>
-                                        <input type="number" value="{{$signos_vitales->frecuencia_cardiaca}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="X'" id="input_frecuencia_cardiaca" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" value="{{$signos_vitales == null ? null : $signos_vitales->frecuencia_cardiaca}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="X'" id="input_frecuencia_cardiaca" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -191,7 +191,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">FR</span>
                                         </div>
-                                        <input type="number" value="{{$signos_vitales->frecuencia_respiratoria}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="X'" id="input_frecuencia_respiratoria" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" value="{{$signos_vitales == null ? null : $signos_vitales->frecuencia_respiratoria}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="X'" id="input_frecuencia_respiratoria" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -201,7 +201,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">GMT</span>
                                         </div>
-                                        <input type="number" value="{{$signos_vitales->glucometria}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="mgdl" id="input_glocometria" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" value="{{$signos_vitales == null ? null : $signos_vitales->glucometria}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" placeholder="mgdl" id="input_glocometria" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -231,7 +231,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div id="div_input_mc_ginecologia">
-                                            <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_mc" rows="3" placeholder="Ingrese el diagnostico del paciente">{{$consulta_exp_pediatrico->motivo_consulta}}</textarea>
+                                            <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_mc" rows="3" placeholder="Ingrese el diagnostico del paciente">{{ $consulta_exp_pediatrico == null ? null : $consulta_exp_pediatrico->motivo_consulta}}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -247,7 +247,7 @@
                                     </div>
                                     <div class="card-body">
                                         <div id="div_input_mc_ginecologia">
-                                            <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_historia_enfermedad_actual" rows="3" placeholder="Ingrese el diagnostico del paciente">{{$consulta_exp_pediatrico->historia_enfermedad_actual}}</textarea>
+                                            <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif class="form-control" id="input_historia_enfermedad_actual" rows="3" placeholder="Ingrese el diagnostico del paciente">{{$consulta_exp_pediatrico == null ? null :$consulta_exp_pediatrico->historia_enfermedad_actual}}</textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -266,7 +266,7 @@
                                         </h5>
                                     </div>
                                     <div class="card-body">
-                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($consulta_exp_pediatrico->antecedentes_personales_patologicos != null || $consulta_exp_pediatrico->antecedentes_personales_patologicos != '')) @else disabled @endif id="input_app" rows="3" placeholder="Describa aquí">{{$consulta_exp_pediatrico->antecedentes_personales_patologicos}}</textarea>
+                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($consulta_exp_pediatrico->antecedentes_personales_patologicos != null || $consulta_exp_pediatrico->antecedentes_personales_patologicos != '')) @else disabled @endif id="input_app" rows="3" placeholder="Describa aquí">{{$consulta_exp_pediatrico == null ? null : $consulta_exp_pediatrico->antecedentes_personales_patologicos}}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -284,7 +284,7 @@
                                         </h5>
                                     </div>
                                     <div class="card-body">
-                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos != null || $consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos != '')) @else disabled @endif id="input_tx" rows="3" placeholder="Describa aquí">{{$consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos}}</textarea>
+                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos != null || $consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos != '')) @else disabled @endif id="input_tx" rows="3" placeholder="Describa aquí">{{$consulta_exp_pediatrico == null ? null : $consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos}}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -301,7 +301,7 @@
                                             @endif
                                             </span>
                                         </div>
-                                        <input type="text" class="form-control" value="{{$consulta_exp_pediatrico->antecedentes_familiares_patologicos}}" @if($estado_edicion->estado_edicion == 1 && ($consulta_exp_pediatrico->antecedentes_familiares_patologicos != null || $consulta_exp_pediatrico->antecedentes_familiares_patologicos != '')) @else disabled @endif id="input_afp" placeholder="Describa aquí" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" class="form-control" value="{{$consulta_exp_pediatrico == null ? null : $consulta_exp_pediatrico->antecedentes_familiares_patologicos}}" @if($estado_edicion->estado_edicion == 1 && ($consulta_exp_pediatrico->antecedentes_familiares_patologicos != null || $consulta_exp_pediatrico->antecedentes_familiares_patologicos != '')) @else disabled @endif id="input_afp" placeholder="Describa aquí" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -318,7 +318,7 @@
                                             @endif
                                             </span>
                                         </div>
-                                        <input type="text" class="form-control" value="{{$consulta_exp_pediatrico->antecedentes_hospitalarios_quirurgicos}}" @if($estado_edicion->estado_edicion == 1 && ($consulta_exp_pediatrico->antecedentes_hospitalarios_quirurgicos != null || $consulta_exp_pediatrico->antecedentes_hospitalarios_quirurgicos != '')) @else disabled @endif id="input_AHxTxQx" placeholder="Describa aquí" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" class="form-control" value="{{$consulta_exp_pediatrico == null ? null : $consulta_exp_pediatrico->antecedentes_hospitalarios_quirurgicos}}" @if($estado_edicion->estado_edicion == 1 && ($consulta_exp_pediatrico->antecedentes_hospitalarios_quirurgicos != null || $consulta_exp_pediatrico->antecedentes_hospitalarios_quirurgicos != '')) @else disabled @endif id="input_AHxTxQx" placeholder="Describa aquí" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -330,7 +330,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">INMUNIZACIÓN</span>
                                         </div>
-                                        <input type="text" class="form-control" value="{{$consulta_exp_pediatrico->inmunizacion}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_inmunizacion" placeholder="Describa aquí" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" class="form-control" value="{{$consulta_exp_pediatrico == null ? null : $consulta_exp_pediatrico->inmunizacion}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_inmunizacion" placeholder="Describa aquí" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -348,7 +348,7 @@
                                         </h5>
                                     </div>
                                     <div class="card-body">
-                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($consulta_exp_pediatrico->tipo_alergia  != null || $consulta_exp_pediatrico->tipo_alergia != '')) @else disabled @endif id="input_alergias" rows="3" placeholder="Describa aquí">{{$consulta_exp_pediatrico->tipo_alergia }}</textarea>
+                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($consulta_exp_pediatrico->tipo_alergia  != null || $consulta_exp_pediatrico->tipo_alergia != '')) @else disabled @endif id="input_alergias" rows="3" placeholder="Describa aquí">{{$consulta_exp_pediatrico == null ? null : $consulta_exp_pediatrico->tipo_alergia }}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -375,7 +375,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">NOMBRE </span>
                                         </div>
-                                        <input type="text" class="form-control" value="{{$antecendentes_prenatales->nombre_madre}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_nombre_madre" placeholder="Nombre de la madre" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" class="form-control" value="{{$antecendentes_prenatales == null ? null : $antecendentes_prenatales->nombre_madre}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_nombre_madre" placeholder="Nombre de la madre" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -385,7 +385,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">EDAD </span>
                                         </div>
-                                        <input type="number" class="form-control" value="{{$antecendentes_prenatales->edad}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_edad_madre" placeholder="Edad de la madre" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" class="form-control" value="{{$antecendentes_prenatales == null ? null : $antecendentes_prenatales->edad}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_edad_madre" placeholder="Edad de la madre" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -418,7 +418,7 @@
                                         </h5>
                                     </div>
                                     <div class="card-body">
-                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($consulta_exp_pediatrico->tipo_alergia  != null || $consulta_exp_pediatrico->tipo_alergia != '')) @else disabled @endif id="input_enfer_durante_embarazo" rows="3" placeholder="Describa las enfermedades">{{$consulta_exp_pediatrico->tipo_alergia}}</textarea>
+                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($consulta_exp_pediatrico->tipo_alergia  != null || $consulta_exp_pediatrico->tipo_alergia != '')) @else disabled @endif id="input_enfer_durante_embarazo" rows="3" placeholder="Describa las enfermedades">{{$consulta_exp_pediatrico == null ? null :$consulta_exp_pediatrico->tipo_alergia}}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -430,7 +430,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">NÚMERO DE GESTAS PREVIAS (G) </span>
                                         </div>
-                                        <input type="number" class="form-control" value="{{$antecendentes_prenatales->gestas}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_numero_gestas_previas" placeholder="¿Cuántas gestas previas?" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" class="form-control" value="{{$antecendentes_prenatales == null ? null :$antecendentes_prenatales->gestas}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_numero_gestas_previas" placeholder="¿Cuántas gestas previas?" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -440,7 +440,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">NÚMERO DE PARTOS (P) </span>
                                         </div>
-                                        <input type="number" class="form-control" value="{{$antecendentes_prenatales->partos}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_numero_partos" placeholder="¿Cuántos partos?" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" class="form-control" value="{{$antecendentes_prenatales == null ? null :$antecendentes_prenatales->partos}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_numero_partos" placeholder="¿Cuántos partos?" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -452,7 +452,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">NÚMERO DE CESAREAS (C) </span>
                                         </div>
-                                        <input type="number" class="form-control" value="{{$antecendentes_prenatales->cesarias}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_numero_cesareas" placeholder="¿Cuántas cesareas?" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" class="form-control" value="{{$antecendentes_prenatales == null ? null :$antecendentes_prenatales->cesarias}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_numero_cesareas" placeholder="¿Cuántas cesareas?" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -462,7 +462,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">CONTROL PRENATAL DEL ÚLTIMO EMBARAZO (CPN) </span>
                                         </div>
-                                        <input type="number" class="form-control" value="{{$antecendentes_prenatales->control_prenatal_ultimo_embarazo}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_numero_control_prenatal_utlimo_parto" placeholder="¿Cuántos controles?" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" class="form-control" value="{{$antecendentes_prenatales == null ? null :$antecendentes_prenatales->control_prenatal_ultimo_embarazo}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_numero_control_prenatal_utlimo_parto" placeholder="¿Cuántos controles?" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -489,7 +489,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">NACE EN </span>
                                         </div>
-                                        <input type="text" class="form-control" value="{{$natalicio->lugar_nacimiento}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_nace_en" placeholder="¿Dónde nació el bebé?" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="text" class="form-control" value="{{ $natalicio == null ? null : $natalicio->lugar_nacimiento}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_nace_en" placeholder="¿Dónde nació el bebé?" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -499,7 +499,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">APGAR </span>
                                         </div>
-                                        <input type="number" class="form-control" value="{{$natalicio->apgar}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_apgar" placeholder="Datos" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" class="form-control" value="{{ $natalicio == null ? null : $natalicio->apgar}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_apgar" placeholder="Datos" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -511,7 +511,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">PESO </span>
                                         </div>
-                                        <input type="number" class="form-control" value="{{$natalicio->peso}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_peso_natalicio" placeholder="g" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" class="form-control" value="{{ $natalicio == null ? null : $natalicio->peso}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_peso_natalicio" placeholder="g" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -521,7 +521,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">TALLA </span>
                                         </div>
-                                        <input type="number" class="form-control" value="{{$natalicio->talla}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_talla_natalicio" placeholder="cm" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" class="form-control" value="{{ $natalicio == null ? null : $natalicio->talla}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_talla_natalicio" placeholder="cm" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -531,7 +531,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon1">PERÍMETRO CEFÁLICO (PC) </span>
                                         </div>
-                                        <input type="number" class="form-control" value="{{$natalicio->perimetro_cefalico}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_perimetro_cefalico" placeholder="cm" aria-label="Username" aria-describedby="basic-addon1">
+                                        <input type="number" class="form-control" value="{{ $natalicio == null ? null :$natalicio->perimetro_cefalico}}" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_perimetro_cefalico" placeholder="cm" aria-label="Username" aria-describedby="basic-addon1">
                                     </div>
                                 </div>
                             </div>
@@ -564,7 +564,7 @@
                                         </h5>
                                     </div>
                                     <div class="card-body">
-                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($natalicio->complicaciones_parto != null || $natalicio->complicaciones_parto != '')) @else disabled @endif id="input_complicaciones_parto" rows="3" placeholder="¿Qué complicaciones presentó?">{{$natalicio->complicaciones_parto}}</textarea>
+                                        <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($natalicio->complicaciones_parto != null || $natalicio->complicaciones_parto != '')) @else disabled @endif id="input_complicaciones_parto" rows="3" placeholder="¿Qué complicaciones presentó?">{{ $natalicio == null ? null : $natalicio->complicaciones_parto}}</textarea>
                                     </div>
                                 </div>
                             </div>
@@ -591,43 +591,43 @@
                                         <div class="form-group">
                                             <div class="form-group clearfix">
                                                 <div class="icheck-primary d-outline">
-                                                    <input type="checkbox" id="checkboxSonrio" @if($estado_edicion->estado_edicion == 1) @else disabled @endif @if($desarrollo_psicomotor->sonrio == true) checked @else @endif>
+                                                    <input type="checkbox" id="checkboxSonrio" @if($estado_edicion->estado_edicion == 1) @else disabled @endif ($desarrollo_psicomotor == null ? null : @if($desarrollo_psicomotor->sonrio == true) checked @else @endif ) >
                                                     <label for="checkboxSonrio" value="1">
                                                     Sonrió
                                                     </label>
                                                 </div>
                                                 <div class="icheck-primary d-outline">
-                                                    <input type="checkbox" id="checkboxSostuvoCabeza" @if($estado_edicion->estado_edicion == 1) @else disabled @endif @if($desarrollo_psicomotor->sostuvo_cabeza == true) checked @else @endif>
+                                                    <input type="checkbox" id="checkboxSostuvoCabeza" @if($estado_edicion->estado_edicion == 1) @else disabled @endif ( $desarrollo_psicomotor == null ? null : @if($desarrollo_psicomotor->sostuvo_cabeza == true) checked @else @endif )>
                                                     <label for="checkboxSostuvoCabeza">
                                                     Sostuvo Cabeza
                                                     </label>
                                                 </div>
                                                 <div class="icheck-primary d-outline">
-                                                    <input type="checkbox" id="checkboxSeSento" @if($estado_edicion->estado_edicion == 1) @else disabled @endif @if($desarrollo_psicomotor->se_sento == true) checked @else @endif>
+                                                    <input type="checkbox" id="checkboxSeSento" @if($estado_edicion->estado_edicion == 1) @else disabled @endif ( $desarrollo_psicomotor == null ? null : @if($desarrollo_psicomotor->se_sento == true) checked @else @endif )>
                                                     <label for="checkboxSeSento">
                                                     Se Sentó
                                                     </label>
                                                 </div>
                                                 <div class="icheck-primary d-outline">
-                                                    <input type="checkbox" id="checkboxSeParo" @if($estado_edicion->estado_edicion == 1) @else disabled @endif @if($desarrollo_psicomotor->se_paro == true) checked @else @endif>
+                                                    <input type="checkbox" id="checkboxSeParo" @if($estado_edicion->estado_edicion == 1) @else disabled @endif ( $desarrollo_psicomotor == null ? null : @if($desarrollo_psicomotor->se_paro == true) checked @else @endif )>
                                                     <label for="checkboxSeParo">
                                                     Se Paró
                                                     </label>
                                                 </div>
                                                 <div class="icheck-primary d-outline">
-                                                    <input type="checkbox" id="checkboxCaminoSolo" @if($estado_edicion->estado_edicion == 1) @else disabled @endif @if($desarrollo_psicomotor->comino_solo == true) checked @else @endif>
+                                                    <input type="checkbox" id="checkboxCaminoSolo" @if($estado_edicion->estado_edicion == 1) @else disabled @endif ( $desarrollo_psicomotor == null ? null : @if($desarrollo_psicomotor->comino_solo == true) checked @else @endif )>
                                                     <label for="checkboxCaminoSolo">
                                                     Camino Solo
                                                     </label>
                                                 </div>
                                                 <div class="icheck-primary d-outline">
-                                                    <input type="checkbox" id="checkboxHabla" @if($estado_edicion->estado_edicion == 1) @else disabled @endif @if($desarrollo_psicomotor->habla == true) checked @else @endif>
+                                                    <input type="checkbox" id="checkboxHabla" @if($estado_edicion->estado_edicion == 1) @else disabled @endif ( $desarrollo_psicomotor == null ? null : @if($desarrollo_psicomotor->habla == true) checked @else @endif )>
                                                     <label for="checkboxHabla">
                                                     Habla
                                                     </label>
                                                 </div>
                                                 <div class="icheck-primary d-outline">
-                                                    <input type="checkbox" id="checkboxControlEsfinteres" @if($estado_edicion->estado_edicion == 1) @else disabled @endif @if($desarrollo_psicomotor->control_esfinteres == true) checked @else @endif>
+                                                    <input type="checkbox" id="checkboxControlEsfinteres" @if($estado_edicion->estado_edicion == 1) @else disabled @endif ( $desarrollo_psicomotor == null ? null : @if($desarrollo_psicomotor->control_esfinteres == true) checked @else @endif )>
                                                     <label for="checkboxControlEsfinteres">
                                                     Control Esfínteres
                                                     </label>
@@ -649,7 +649,7 @@
                                                 </h5>
                                             </div>
                                             <div class="card-body">
-                                                <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($desarrollo_psicomotor->escolaridad_actual != null || $desarrollo_psicomotor->escolaridad_actual != '')) @else disabled @endif id="input_escolaridad_actual" rows="3" placeholder="¿Cual escolaridad?">{{$desarrollo_psicomotor->escolaridad_actual}}</textarea>
+                                                <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($desarrollo_psicomotor->escolaridad_actual != null || $desarrollo_psicomotor->escolaridad_actual != '')) @else disabled @endif id="input_escolaridad_actual" rows="3" placeholder="¿Cual escolaridad?">{{ $desarrollo_psicomotor == null ? null : $desarrollo_psicomotor->escolaridad_actual}}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -683,7 +683,7 @@
                                                 <div class="row">
                                                     <div class="col-md-4">
                                                         <div class="icheck-primary">
-                                                            <input type="radio" id="checkboxMaterna" name="lactancia" @if($estado_edicion->estado_edicion == 1 && ($lactancia->ablactacion != null || $lactancia->ablactacion != '')) @else disabled @endif @if($lactancia->lactancia_materna == true && $lactancia->lactancia_artificial == false) checked @else @endif>
+                                                            <input type="radio" id="checkboxMaterna" name="lactancia" @if($estado_edicion->estado_edicion == 1 && ($lactancia->ablactacion != null || $lactancia->ablactacion != '')) @else disabled @endif ( $lactancia == null ? null : @if($lactancia->lactancia_materna == true && $lactancia->lactancia_artificial == false) checked @else @endif )>
                                                             <label for="checkboxMaterna">
                                                             Materna
                                                             </label>
@@ -691,7 +691,7 @@
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div class="icheck-primary text-center pull center">
-                                                            <input type="radio" id="checkboxArtificial" name="lactancia" @if($estado_edicion->estado_edicion == 1 && ($lactancia->ablactacion != null || $lactancia->ablactacion != '')) @else disabled @endif @if($lactancia->lactancia_materna == false && $lactancia->lactancia_artificial == true) checked @else @endif>
+                                                            <input type="radio" id="checkboxArtificial" name="lactancia" @if($estado_edicion->estado_edicion == 1 && ($lactancia->ablactacion != null || $lactancia->ablactacion != '')) @else disabled @endif ( $lactancia == null ? null : @if($lactancia->lactancia_materna == false && $lactancia->lactancia_artificial == true) checked @else @endif )>
                                                             <label for="checkboxArtificial">
                                                             Artificial
                                                             </label>
@@ -699,7 +699,7 @@
                                                     </div>
                                                     <div class="col-md-4">
                                                         <div class="icheck-primary  text-right pull right">
-                                                            <input type="radio" id="checkboxMixta" name="lactancia" @if($estado_edicion->estado_edicion == 1 && ($lactancia->ablactacion != null || $lactancia->ablactacion != '')) @else disabled @endif @if($lactancia->lactancia_materna == true && $lactancia->lactancia_artificial == true) checked @else @endif>
+                                                            <input type="radio" id="checkboxMixta" name="lactancia" @if($estado_edicion->estado_edicion == 1 && ($lactancia->ablactacion != null || $lactancia->ablactacion != '')) @else disabled @endif ( $lactancia == null ? null : @if($lactancia->lactancia_materna == true && $lactancia->lactancia_artificial == true) checked @else @endif )>
                                                             <label for="checkboxMixta">
                                                             Mixta
                                                             </label>
@@ -719,7 +719,7 @@
                                                 </h5>
                                             </div>
                                             <div class="card-body">
-                                                <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($lactancia->ablactacion != null || $lactancia->ablactacion != '')) @else disabled @endif id="input_ablactacion" rows="3" placeholder="Describa la primera comida">{{$lactancia->ablactacion}}</textarea>
+                                                <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($lactancia->ablactacion != null || $lactancia->ablactacion != '')) @else disabled @endif id="input_ablactacion" rows="3" placeholder="Describa la primera comida">{{ $lactancia == null ? null : $lactancia->ablactacion }}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -733,7 +733,7 @@
                                                 </h5>
                                             </div>
                                             <div class="card-body">
-                                                <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($lactancia->alimentacion_actual != null || $lactancia->alimentacion_actual != '')) @else disabled @endif id="input_alimentacion_actual" rows="3" placeholder="Describa la alimentación Actual">{{$lactancia->alimentacion_actual}}</textarea>
+                                                <textarea class="form-control" @if($estado_edicion->estado_edicion == 1 && ($lactancia->alimentacion_actual != null || $lactancia->alimentacion_actual != '')) @else disabled @endif id="input_alimentacion_actual" rows="3" placeholder="Describa la alimentación Actual">{{ $lactancia == null ? null :$lactancia->alimentacion_actual}}</textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -757,7 +757,7 @@
                     <div class="card-body" style="display: block;">
                         <div class="row">
                             <div class="col-md-12">
-                                <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_examen_fisico" rows="3" placeholder="Describa el examen físico">{{$exa_fisico_diagnostico_indicaciones->examen_fisico}}</textarea>     
+                                <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_examen_fisico" rows="3" placeholder="Describa el examen físico">{{ $exa_fisico_diagnostico_indicaciones == null ? null : $exa_fisico_diagnostico_indicaciones->examen_fisico}}</textarea>     
                             </div>
                         </div>
                     </div>
@@ -777,7 +777,7 @@
                     <div class="card-body" style="display: block;">
                         <div class="row">
                             <div class="col-md-12">
-                                <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_diagnostico" rows="3" placeholder="Escriba el diagnóstico">{{$exa_fisico_diagnostico_indicaciones->diagnostico}}</textarea>     
+                                <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_diagnostico" rows="3" placeholder="Escriba el diagnóstico">{{ $exa_fisico_diagnostico_indicaciones == null ? null : $exa_fisico_diagnostico_indicaciones->diagnostico}}</textarea>     
                             </div>
                         </div>
                     </div>
@@ -797,7 +797,7 @@
                     <div class="card-body" style="display: block;">
                         <div class="row">
                             <div class="col-md-12">
-                                <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_indicaciones" rows="3" placeholder="Esciba las indicaciones">{{$exa_fisico_diagnostico_indicaciones->indicaciones}}</textarea>     
+                                <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif id="input_indicaciones" rows="3" placeholder="Esciba las indicaciones">{{ $exa_fisico_diagnostico_indicaciones == null ? null : $exa_fisico_diagnostico_indicaciones->indicaciones}}</textarea>     
                             </div>
                         </div>
                     </div>
@@ -873,7 +873,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif  id="input_receta" rows="5" placeholder="Px">{{$receta->descripcion_receta}}</textarea>
+                            <textarea class="form-control" @if($estado_edicion->estado_edicion == 1) @else disabled @endif  id="input_receta" rows="5" placeholder="Px">{{$receta == null ? null : $receta->descripcion_receta}}</textarea>
                         </div>
                     </div>
                 </div>
@@ -882,7 +882,7 @@
                         <div class="col-lg-12">
                             <div class="btn-group w-100">
                             <a type="button" href="{{url('/historial-clinico/paciente/')}}/{{$paciente->id}}" class="btn btn-primary col start"><i class="fas fa-arrow-left"></i> Volver a Historial Clínco</a>
-                            <a class="btn btn-primary" href="{{url('/reporte/pediatria/paciente/'.$paciente->id.'/remision/'.$receta->id_remision.'/expediente/'.$id_expediente)}}" title='Reporte'>Imprimir</a>
+                            <a class="btn btn-primary" href="{{url('/reporte/pediatria/paciente/'.$paciente->id.'/remision/'.$id_remision.'/expediente/'.$id_expediente)}}" title='Reporte'>Imprimir</a>
                             @if($estado_edicion->estado_edicion == 1)
                                 <button type="submit" class="btn btn-warning col start" id="btn_editar_expediente">
                                     <i class="fas fa-save"></i>
@@ -906,7 +906,7 @@
 <script type="text/javascript">
     var url_guardar_expediente = "{{url('/exp/pediatrico/paciente')}}/guardar";
     var validar = 1;
-    var id_remision = {{$receta->id_remision}};
+    var id_remision = {{$id_remision}};
     var campo = null;
     var accion = 2;
     var id_paciente = {{$paciente->id}};
@@ -1007,8 +1007,8 @@
             }
         });
         
-        $("#input_tipo_sangre").val("{{$antecendentes_prenatales->id_tipo_sangre}}");
-        $("#input_tipo_parto").val("{{$natalicio->id_tipo_parto}}");
+        $("#input_tipo_sangre").val("{{$antecendentes_prenatales == null ? null : $antecendentes_prenatales->id_tipo_sangre}}");
+        $("#input_tipo_parto").val("{{$natalicio == null ? null : $natalicio->id_tipo_parto}}");
 
         $("#btn_editar_expediente").on( "click", function () {
             //inicia sigons vitales
