@@ -25,30 +25,33 @@ class ExpPediatricoController extends Controller
 
         $paciente = collect(\DB::select("
             select 
-            id,
+            fp.id,
             concat(primer_nombre,' ',segundo_nombre,' ',primer_apellido,' ',segundo_apellido) nombre,
             case 
-                when 
-                    date_part('year',age(CURRENT_DATE, fecha_nacimiento)) >1 
-                then 
-                    concat(date_part('year',age(CURRENT_DATE, fecha_nacimiento)),' años') 
-                else
-                    concat(date_part('year',age(CURRENT_DATE, fecha_nacimiento)),' año') 
+                    when 
+                            date_part('year',age(CURRENT_DATE, fecha_nacimiento)) >1 
+                    then 
+                            concat(date_part('year',age(CURRENT_DATE, fecha_nacimiento)),' años') 
+                    else
+                            concat(date_part('year',age(CURRENT_DATE, fecha_nacimiento)),' año') 
             end edad,
             case 
-                when 
-                    sexo = 'M' 
-                then 
-                    'Masculino'
-                else 
-                    'Femenino'
-                end sexo, 
-            domicilio, telefono, identidad, 
-            to_char(current_date,'TMDay')||', '||to_char( current_date ,'dd')||' de '||to_char(current_date,'TMMonth')||' de '||to_char(current_date,'yyyy') fecha,
+                    when 
+                            sexo = 'M' 
+                    then 
+                            'Masculino'
+                    else 
+                            'Femenino'
+                    end sexo, 
+            domicilio, telefono, identidad,
+            ds.nombre_espanol||', '||to_char( current_date ,'dd')||' de '||ma.nombre_espanol||' de '||to_char(current_date,'yyyy') fecha,
             to_char(current_timestamp, 'HH12:MI AM') hora,
             extract(YEAR FROM age(now()::DATE ,fecha_nacimiento::DATE))*12 + extract(MONTH FROM age (to_char(now(), 'YYYY/MM/DD')::DATE, fecha_nacimiento::DATE)) meses
-            from reg_ficha_pacientes where deleted_at is null
-            and id = :id_paciente
+            from reg_ficha_pacientes fp
+            join cat_meses_anio ma on ma.id_mes_bd::int = to_char( current_date,'MM')::int
+            join cat_dias_semana ds on ds.id_dia_bd::text = to_char(current_date,'D')
+            where fp.deleted_at is null
+            and fp.id = :id_paciente
         ", ["id_paciente" => $id_paciente]))->first();
 
         $medico = collect(\DB::select("
@@ -259,7 +262,7 @@ class ExpPediatricoController extends Controller
                     (id_paciente, id_expediente, id_remision, temperatura, presion_arterial, peso, talla, saturacion, 
                     frecuencia_cardiaca, frecuencia_respiratoria, glucometria, created_at) values 
                     (:id_paciente, :id_expediente, :id_remision, :temperatura, :presion_arterial, :peso, :talla, :saturacion, :frecuencia_cardiaca, 
-                        :frecuencia_respiratoria, :glucometria, now())
+                        :frecuencia_respiratoria, :glucometria, (now() at time zone 'CST'))
                 ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "temperatura" => $temperatura, "presion_arterial" => $presion_arterial, "peso" => $peso,
                     "talla" => $talla, "saturacion" => $saturacion, "frecuencia_cardiaca" => $frecuencia_cardiaca, "frecuencia_respiratoria" => $frecuencia_respiratoria,
                     "glucometria" => $glucometria]);
@@ -267,7 +270,7 @@ class ExpPediatricoController extends Controller
                 DB::select("
                     INSERT INTO public.tbl_exp_pediatrico_hea_mc(
                     id_paciente, id_expediente, id_remision, motivo_consulta, historia_enfermedad_actual, created_at)
-                    VALUES (:id_paciente, :id_expediente, :id_remision, :motivo_consulta, :historia_enfermedad_actual, now())
+                    VALUES (:id_paciente, :id_expediente, :id_remision, :motivo_consulta, :historia_enfermedad_actual, (now() at time zone 'CST'))
                 ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "motivo_consulta" => $motivo_consulta, "historia_enfermedad_actual" => $historia_enfermedad_actual]);
                 //if($sub_siguiente == 0){
                     //inicia consulta
@@ -276,7 +279,7 @@ class ExpPediatricoController extends Controller
                         (id_paciente, id_expediente, id_remision, motivo_consulta, historia_enfermedad_actual, antecedentes_personales_patologicos,
                         tratamiento_antecedentes_personales_patologicos, antecedentes_familiares_patologicos, antecedentes_hospitalarios_quirurgicos,
                         inmunizacion, tipo_alergia, created_at) values
-                        (:id_paciente, :id_expediente, :id_remision, :motivo_consulta, :historia_enfermedad_actual, :antecedentes_personales_patologicos, :tratamientos, :afp, :antecedentes_hospitalarios_quirurgicos, :inmunizacion, :alergias, now())
+                        (:id_paciente, :id_expediente, :id_remision, :motivo_consulta, :historia_enfermedad_actual, :antecedentes_personales_patologicos, :tratamientos, :afp, :antecedentes_hospitalarios_quirurgicos, :inmunizacion, :alergias, (now() at time zone 'CST'))
                     ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "motivo_consulta" => $motivo_consulta, "historia_enfermedad_actual" => $historia_enfermedad_actual,
                         "antecedentes_personales_patologicos" => $antecedentes_personales_patologicos, "tratamientos" => $tratamientos, "afp" => $afp, "antecedentes_hospitalarios_quirurgicos" => $antecedentes_hospitalarios_quirurgicos, "inmunizacion" => $inmunizacion, "alergias" => $alergias]);
                     //finaliza consulta
@@ -287,7 +290,7 @@ class ExpPediatricoController extends Controller
                         enfermedades_durante_embarazo, gestas, partos, 
                         cesarias, control_prenatal_ultimo_embarazo, created_at) values
                         (:id_paciente, :id_expediente, :id_remision, :nombre_madre, :edad, :id_tipo_sangre, 
-                        :enfermedades_durante_embarazo, :gestas, :partos, :cesarias, :control_prenatal_ultimo_embarazo, now())
+                        :enfermedades_durante_embarazo, :gestas, :partos, :cesarias, :control_prenatal_ultimo_embarazo, (now() at time zone 'CST'))
                     ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "nombre_madre" => $nombre_madre, "edad" => $edad_madre, "id_tipo_sangre" => $tipo_sangre,
                     "enfermedades_durante_embarazo" => $enfer_durante_embarazo, "gestas" => $numero_gestas_previas, "partos" => $numero_partos, 
                     "cesarias" => $numero_cesareas, "control_prenatal_ultimo_embarazo" => $numero_control_prenatal_utlimo_parto]);
@@ -296,7 +299,7 @@ class ExpPediatricoController extends Controller
                     DB::select("
                         insert into tbl_ped_natalicio 
                         (id_paciente, id_expediente, id_remision, lugar_nacimiento, apgar, peso, talla, perimetro_cefalico, id_tipo_parto, complicaciones_parto, created_at) values
-                        (:id_paciente, :id_expediente, :id_remision, :lugar_nacimiento, :apgar, :peso_natalicio, :talla_natalicio, :perimetro_cefalico, :tipo_parto, :complicaciones_parto, now())
+                        (:id_paciente, :id_expediente, :id_remision, :lugar_nacimiento, :apgar, :peso_natalicio, :talla_natalicio, :perimetro_cefalico, :tipo_parto, :complicaciones_parto, (now() at time zone 'CST'))
                     ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "lugar_nacimiento" => $nace_en, "apgar" => $apgar, "peso_natalicio" => $peso_natalicio,
                     "talla_natalicio" => $talla_natalicio, "perimetro_cefalico" => $perimetro_cefalico, "tipo_parto" => $tipo_parto, 
                     "complicaciones_parto" => $complicaciones_parto]);
@@ -306,7 +309,7 @@ class ExpPediatricoController extends Controller
                         INSERT INTO public.tbl_ped_desarrollo_psicomotor(
                         id_paciente, id_expediente, id_remision, sonrio, sostuvo_cabeza, se_sento, se_paro, comino_solo, habla, control_esfinteres, escolaridad_actual, created_at )
                         VALUES (:id_paciente, :id_expediente, :id_remision, :checkboxSonrio, :checkboxSostuvoCabeza, :checkboxSeSento, :checkboxSeParo, :checkboxCaminoSolo, :checkboxHabla, 
-                        :checkboxControlEsfinteres, :escolaridad_actual, now());
+                        :checkboxControlEsfinteres, :escolaridad_actual, (now() at time zone 'CST'));
                     ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "checkboxSonrio" => $checkboxSonrio, "checkboxSostuvoCabeza" => $checkboxSostuvoCabeza, 
                     "checkboxSeSento" => $checkboxSeSento, "checkboxSeParo" => $checkboxSeParo, "checkboxCaminoSolo" => $checkboxCaminoSolo, "checkboxHabla" => $checkboxHabla, 
                     "checkboxControlEsfinteres" => $checkboxControlEsfinteres, "escolaridad_actual" => $escolaridad_actual]);
@@ -315,7 +318,7 @@ class ExpPediatricoController extends Controller
                     DB::select("
                         INSERT INTO public.tbl_ped_lactancia(
                         id_paciente, id_expediente, id_remision, lactancia_materna, lactancia_artificial, ablactacion, alimentacion_actual, created_at)
-                        VALUES (:id_paciente, :id_expediente, :id_remision, :checkboxMaterna, :checkboxArtificial, :ablactacion, :alimentacion_actual, now());
+                        VALUES (:id_paciente, :id_expediente, :id_remision, :checkboxMaterna, :checkboxArtificial, :ablactacion, :alimentacion_actual, (now() at time zone 'CST'));
                     ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "checkboxMaterna" => $checkboxMaterna, "checkboxArtificial" => $checkboxArtificial,
                         "ablactacion" => $ablactacion, "alimentacion_actual" => $alimentacion_actual]);
                     //finaliza lactancia
@@ -323,20 +326,20 @@ class ExpPediatricoController extends Controller
                 DB::select("
                     INSERT INTO public.tbl_ped_lactancia_alimentacion_actual(
                     id_paciente, id_expediente, id_remision, alimentacion_actual, created_at)
-                    VALUES (:id_paciente, :id_expediente, :id_remision, :alimentacion_actual, now());
+                    VALUES (:id_paciente, :id_expediente, :id_remision, :alimentacion_actual, (now() at time zone 'CST'));
                 ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "alimentacion_actual" => $alimentacion_actual]);
                 //inicia examen fisico, diagnostico, indicaciones
                 DB::select("
                     INSERT INTO public.tbl_ped_exa_fisico_diagnostico_indicaciones(
                     id_paciente, id_expediente, id_remision, examen_fisico, diagnostico, indicaciones, created_at)
-                    VALUES (:id_paciente, :id_expediente, :id_remision, :examen_fisico, :diagnostico, :indicaciones, now()); 
+                    VALUES (:id_paciente, :id_expediente, :id_remision, :examen_fisico, :diagnostico, :indicaciones, (now() at time zone 'CST')); 
                 ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "examen_fisico" => $examen_fisico,
                     "diagnostico" => $diagnostico, "diagnostico" => $diagnostico, "indicaciones" => $indicaciones]);
                 //finaliza examen fisico, diagnostico, indicaciones
                 DB::select("
                     insert into tbl_receta_medica 
                     (id_paciente, id_expediente, id_remision, id_medico, fecha_elaborada, descripcion_receta, created_at) values
-                    (:id_paciente, :id_expediente, :id_remision, :id_medico, now(), :descripcion_receta, now())        
+                    (:id_paciente, :id_expediente, :id_remision, :id_medico, (now() at time zone 'CST'), :descripcion_receta, (now() at time zone 'CST'))        
                 ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "id_medico" => $id_medico, "descripcion_receta" => $receta]);
                 //inicia estado expediente
                 DB::select("update tbl_remisiones set id_estado_remision = :estado_expediente where id = :id_remision
@@ -353,7 +356,7 @@ class ExpPediatricoController extends Controller
                     update tbl_signos_vitales set
                     temperatura = :temperatura, presion_arterial = :presion_arterial, peso = :peso, talla = :talla, 
                     saturacion = :saturacion, frecuencia_cardiaca = :frecuencia_cardiaca, frecuencia_respiratoria = :frecuencia_respiratoria, 
-                    glucometria = :glucometria, updated_at = now()
+                    glucometria = :glucometria, updated_at = (now() at time zone 'CST')
                     where deleted_at is null and
                     id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
                 ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "temperatura" => $temperatura, "presion_arterial" => $presion_arterial, "peso" => $peso,
@@ -362,7 +365,7 @@ class ExpPediatricoController extends Controller
                 //finaliza signos vitales
                 DB::select("
                     UPDATE public.tbl_exp_pediatrico_hea_mc
-                    SET motivo_consulta=:motivo_consulta, historia_enfermedad_actual=:historia_enfermedad_actual, updated_at = now()
+                    SET motivo_consulta=:motivo_consulta, historia_enfermedad_actual=:historia_enfermedad_actual, updated_at = (now() at time zone 'CST')
                     where deleted_at is null and
                     id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
                 ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "motivo_consulta" => $motivo_consulta, "historia_enfermedad_actual" => $historia_enfermedad_actual]);
@@ -372,7 +375,7 @@ class ExpPediatricoController extends Controller
                         UPDATE public.tbl_exp_pediatrico SET 
                         motivo_consulta= :motivo_consulta, historia_enfermedad_actual= :historia_enfermedad_actual, antecedentes_personales_patologicos= :antecedentes_personales_patologicos, 
                         tratamiento_antecedentes_personales_patologicos= :tratamiento_antecedentes_personales_patologicos, antecedentes_familiares_patologicos= :antecedentes_familiares_patologicos, 
-                        antecedentes_hospitalarios_quirurgicos= :antecedentes_hospitalarios_quirurgicos, inmunizacion= :inmunizacion, tipo_alergia= :tipo_alergia, updated_at = now()
+                        antecedentes_hospitalarios_quirurgicos= :antecedentes_hospitalarios_quirurgicos, inmunizacion= :inmunizacion, tipo_alergia= :tipo_alergia, updated_at = (now() at time zone 'CST')
                         where deleted_at is null and
                         id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
                     ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "motivo_consulta" => $motivo_consulta, "historia_enfermedad_actual" => $historia_enfermedad_actual, 
@@ -384,7 +387,7 @@ class ExpPediatricoController extends Controller
                         DB::select("
                         UPDATE public.tbl_ped_antecendentes_prenatales SET 
                         nombre_madre= :nombre_madre, edad= :edad, id_tipo_sangre= :id_tipo_sangre, enfermedades_durante_embarazo= :enfermedades_durante_embarazo,
-                        gestas= :gestas, partos= :partos, cesarias= :cesarias, control_prenatal_ultimo_embarazo= :control_prenatal_ultimo_embarazo, updated_at = now()
+                        gestas= :gestas, partos= :partos, cesarias= :cesarias, control_prenatal_ultimo_embarazo= :control_prenatal_ultimo_embarazo, updated_at = (now() at time zone 'CST')
                         where deleted_at is null and
                         id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
                     ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, 
@@ -396,7 +399,7 @@ class ExpPediatricoController extends Controller
                         DB::select("
                         UPDATE public.tbl_ped_natalicio SET
                         lugar_nacimiento= :lugar_nacimiento, apgar= :apgar, peso= :peso, talla= :talla, perimetro_cefalico= :perimetro_cefalico, 
-                        id_tipo_parto= :id_tipo_parto, complicaciones_parto= :complicaciones_parto, updated_at = now()
+                        id_tipo_parto= :id_tipo_parto, complicaciones_parto= :complicaciones_parto, updated_at = (now() at time zone 'CST')
                         where deleted_at is null and
                         id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
                     ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, 
@@ -408,7 +411,7 @@ class ExpPediatricoController extends Controller
                         DB::select("
                         UPDATE public.tbl_ped_desarrollo_psicomotor SET
                         sonrio= :sonrio, sostuvo_cabeza= :sostuvo_cabeza, se_sento= :se_sento, se_paro= :se_paro, comino_solo= :comino_solo, habla= :habla, 
-                        control_esfinteres= :control_esfinteres, escolaridad_actual= :escolaridad_actual, updated_at = now()
+                        control_esfinteres= :control_esfinteres, escolaridad_actual= :escolaridad_actual, updated_at = (now() at time zone 'CST')
                         where deleted_at is null and
                         id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
                     ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, 
@@ -420,7 +423,7 @@ class ExpPediatricoController extends Controller
                         DB::select("
                         UPDATE public.tbl_ped_lactancia SET
                         lactancia_materna= :lactancia_materna, lactancia_artificial= :lactancia_artificial, 
-                        ablactacion= :ablactacion, alimentacion_actual= :alimentacion_actual, updated_at = now()
+                        ablactacion= :ablactacion, alimentacion_actual= :alimentacion_actual, updated_at = (now() at time zone 'CST')
                         where deleted_at is null and
                         id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
                     ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, 
@@ -430,7 +433,7 @@ class ExpPediatricoController extends Controller
                     //inicia desarrollo lactancia
                         DB::select("
                         UPDATE public.tbl_ped_exa_fisico_diagnostico_indicaciones SET
-                        examen_fisico=:examen_fisico, diagnostico=:diagnostico, indicaciones=:indicaciones, updated_at = now()
+                        examen_fisico=:examen_fisico, diagnostico=:diagnostico, indicaciones=:indicaciones, updated_at = (now() at time zone 'CST')
                         where deleted_at is null and
                         id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
                     ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, 
@@ -439,14 +442,14 @@ class ExpPediatricoController extends Controller
                 //}
                 DB::select("
                     UPDATE public.tbl_ped_lactancia_alimentacion_actual
-                    SET alimentacion_actual=:alimentacion_actual, updated_at = now()
+                    SET alimentacion_actual=:alimentacion_actual, updated_at = (now() at time zone 'CST')
                     where deleted_at is null and
                     id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
                 ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "alimentacion_actual" => $alimentacion_actual]);
                 //inicia receta
                 DB::select("
                     UPDATE public.tbl_receta_medica SET
-                    descripcion_receta= :descripcion_receta, updated_at = now()
+                    descripcion_receta= :descripcion_receta, updated_at = (now() at time zone 'CST')
                     where deleted_at is null and
                     id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
                 ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, 

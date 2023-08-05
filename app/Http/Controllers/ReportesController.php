@@ -127,50 +127,52 @@ class ReportesController extends Controller
             
         
         
-        $estado_edicion_subsiguiente = collect(\DB::select("
+        $estado_edicion_subsiguiente = DB::select("
                 SELECT
                 case 
-                when (now() - p.created_at) <= '24 hour' and r.id = p.id_remision  then 1 
+                when ((now() at time zone 'CST') - p.created_at) <= '24 hour' and r.id = p.id_remision  then 1 
                 else 0 
                 end estado_edicion_subsiguiente, r.id_estado_remision, er.nombre estado
                 from public.tbl_remisiones r
                 join tbl_estados_remisiones er on r.id_estado_remision = er.id
                 left join tbl_exp_pediatrico p on r.id = p.id_remision
                 where r.id_paciente = :id_paciente and r.id = :id_remision and r.deleted_at is null
-            ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]))->first();
+            ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]);
             
 
-            $paciente = collect(\DB::select("
+            $paciente = DB::select("
             select 
             rfp.id,
-             concat(rfp.primer_nombre,' ',rfp.segundo_nombre,' ',rfp.primer_apellido,' ',rfp.segundo_apellido) nombre,
-             case 
-                 when 
+            concat(rfp.primer_nombre,' ',rfp.segundo_nombre,' ',rfp.primer_apellido,' ',rfp.segundo_apellido) nombre,
+            case 
+             when 
                      date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)) >1 
-                 then 
+             then 
                      concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' años') 
-                 else
+             else
                      concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' año') 
-             end edad,
-             case 
-                 when 
+            end edad,
+            case 
+             when 
                      rfp.sexo = 'M' 
-                 then 
+             then 
                      'Masculino'
-                 else 
+             else 
                      'Femenino'
-                 end sexo, 
-             rfp.domicilio, rfp.telefono, rfp.identidad, 
-             to_char(r.created_at,'TMDay')||', '||to_char( r.created_at ,'dd')||' de '||to_char(r.created_at,'TMMonth')||' de '||to_char(r.created_at,'yyyy') fecha,
-             to_char(r.created_at, 'HH12:MI AM') hora,
+             end sexo, 
+            rfp.domicilio, rfp.telefono, rfp.identidad,
+            ds.nombre_espanol||', '||to_char( r.created_at ,'dd')||' de '||ma.nombre_espanol||' de '||to_char(r.created_at,'yyyy') fecha,
+            to_char(r.created_at, 'HH12:MI AM') hora,
             TRIM(COALESCE(TRIM(pe.primer_nombre)||' ','')||COALESCE(TRIM(pe.segundo_nombre)||' ','')||COALESCE(TRIM(pe.primer_apellido)||' ','')||
             COALESCE(TRIM(pe.segundo_apellido||' '),'') ) medico
-             from reg_ficha_pacientes rfp 
-             join tbl_remisiones r on rfp.id = r.id_paciente
+            from reg_ficha_pacientes rfp 
+            join tbl_remisiones r on rfp.id = r.id_paciente
             join per_empleado pe on pe.id = r.id_medico
-             where rfp.deleted_at is null and r.deleted_at is null
+            join cat_meses_anio ma on ma.id_mes_bd::int = to_char( r.created_at::date,'MM')::int
+            join cat_dias_semana ds on ds.id_dia_bd::text = to_char(r.created_at::date,'D')
+            where rfp.deleted_at is null and r.deleted_at is null
                 and rfp.id = :id_paciente and r.id = :id_remision
-            ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]))->first();
+            ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]);
             
             $tipos_sangre = DB::select("
                 select id, nombre from tbl_tipos_sangre where deleted_at is null order by nombre
@@ -184,79 +186,79 @@ class ReportesController extends Controller
                 select id, nombre from tbl_tipos_partos where deleted_at is null order by nombre
             ");
 
-            $sub_siguiente = collect(\DB::select("
+            $sub_siguiente = DB::select("
                 select count(*) existe from tbl_exp_pediatrico where id_paciente = :id_paciente and deleted_at is null
-            ", ["id_paciente" => $id_paciente]))->first();
+            ", ["id_paciente" => $id_paciente]);
 
-            $signos_vitales = collect(\DB::select("
+            $signos_vitales = DB::select("
                 select temperatura, presion_arterial, peso, talla, saturacion, frecuencia_cardiaca, frecuencia_respiratoria, glucometria 
                 from tbl_signos_vitales
                 where id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision and deleted_at is null
-            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]);
 
-            $consulta_exp_pediatrico_hea_mc= collect(\DB::select("
+            $consulta_exp_pediatrico_hea_mc= DB::select("
                 select motivo_consulta from public.tbl_exp_pediatrico_hea_mc
                 where deleted_at is null and
                 id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
-            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]);
             //inicia sub siguiente
-            $consulta_exp_pediatrico = collect(\DB::select("
+            $consulta_exp_pediatrico = DB::select("
                 select motivo_consulta, historia_enfermedad_actual, antecedentes_personales_patologicos, 
                 tratamiento_antecedentes_personales_patologicos, antecedentes_familiares_patologicos, antecedentes_hospitalarios_quirurgicos, 
                 inmunizacion, tipo_alergia
                 from tbl_exp_pediatrico
                 where deleted_at is null and
                 id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
-            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]);
 
-            $antecendentes_prenatales = collect(\DB::select("
+            $antecendentes_prenatales = DB::select("
                 select ap.id_paciente, ap.id_expediente, ap.id_remision, ap.nombre_madre, ap.edad, ap.id_tipo_sangre, ts.nombre tipo_sangre, ap.enfermedades_durante_embarazo, 
                 ap.gestas, ap.partos, ap.cesarias, ap.control_prenatal_ultimo_embarazo
                 from tbl_ped_antecendentes_prenatales ap
                 join tbl_tipos_sangre ts on ap.id_tipo_sangre = ts.id
                 where ap.deleted_at is null
                 and ap.id_paciente = :id_paciente and ap.id_expediente = :id_expediente and ap.id_remision = :id_remision
-            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]);
 
-            $natalicio = collect(\DB::select("
+            $natalicio = DB::select("
                 select pn.id_paciente, pn.id_expediente, pn.id_remision, pn.lugar_nacimiento, pn.apgar, 
                 pn.peso, pn.talla, pn.perimetro_cefalico, pn.id_tipo_parto, tp.nombre tipo_parto, pn.complicaciones_parto
                 from public.tbl_ped_natalicio pn 
                 join tbl_tipos_partos tp on tp.id = pn.id_tipo_parto
                 where pn.deleted_at is null and
                 pn.id_paciente = :id_paciente and pn.id_expediente = :id_expediente and pn.id_remision = :id_remision
-            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]);
 
-            $desarrollo_psicomotor = collect(\DB::select("
+            $desarrollo_psicomotor = DB::select("
                 select id_paciente, id_expediente, id_remision, sonrio, sostuvo_cabeza, se_sento, se_paro, comino_solo,
                 habla, control_esfinteres, escolaridad_actual
                 from public.tbl_ped_desarrollo_psicomotor
                 where deleted_at is null and
                 id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
-            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]);
 
-            $lactancia = collect(\DB::select("
+            $lactancia = DB::select("
                 select id_paciente, id_expediente, id_remision, lactancia_materna, lactancia_artificial,
                 ablactacion, alimentacion_actual
                 from public.tbl_ped_lactancia
                 where deleted_at is null and
                 id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
-            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]);
             //finaliza sub siguiente
-            // $lactancia_alimentacion_actual = collect(\DB::select("
+            // $lactancia_alimentacion_actual = DB::select("
             //     select alimentacion_actual from public.tbl_ped_lactancia_alimentacion_actual
             //     where deleted_at is null and
             //     id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
-            // ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+            // ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]);
 
-            $exa_fisico_diagnostico_indicaciones = collect(\DB::select("
+            $exa_fisico_diagnostico_indicaciones = DB::select("
                 select id_paciente, id_expediente, id_remision, examen_fisico, diagnostico, indicaciones
                 from public.tbl_ped_exa_fisico_diagnostico_indicaciones
                 where deleted_at is null and
                 id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
-            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]);
 
-            $receta = collect(\DB::select("
+            $receta = DB::select("
                 select rm.id_paciente, rm.id_expediente, rm.id_remision,
                 TRIM(
                 COALESCE(TRIM(pe.primer_nombre)||' ','')||
@@ -269,81 +271,124 @@ class ReportesController extends Controller
                 join tbl_cargos c on pe.id_cargo = c.id
                 where  pe.deleted_at is null and 
                 rm.id_paciente = :id_paciente and rm.id_expediente = :id_expediente and rm.id_remision = :id_remision
-            ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+            ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]);
         
            $template = new \PhpOffice\PhpWord\TemplateProcessor( $file );
             
-            
+
+                foreach ( $paciente as $row){
+                    $nombre_paciente = $row->nombre;
+                    $template->setValue( 'nombre_paciente', $row->nombre);
+                    $template->setValue( 'age', $row->edad);
+                    $template->setValue( 'sexo', $row->sexo);
+                    $template->setValue( 'direccion', $row->domicilio);
+                    $template->setValue( 'telefono_paciente', $row->telefono);
+                    $template->setValue( 'identidad', $row->identidad);
+                    $template->setValue( 'fecha_atencion', $row->fecha);
+                    $template->setValue( 'hora_atencion', $row->hora);
+                    $template->setValue( 'medico', $row->medico);
+                    
+                }
                 
-                $nombre_paciente = $paciente->nombre;
+                foreach ($signos_vitales as $row) {
+                    $template->setValue( 'temperatura', $row->temperatura);
+                    $template->setValue( 'presion_arterial', $row->presion_arterial);
+                    $template->setValue( 'peso', $row->peso);
+                    $template->setValue( 'talla', $row->talla);
+                    $template->setValue( 'sat', $row->saturacion);
+                    $template->setValue( 'fc', $row->frecuencia_cardiaca);
+                    $template->setValue( 'fr', $row->frecuencia_respiratoria);
+                    $template->setValue( 'gmt', $row->glucometria);                 
+                    
+                }
                 
-                $template->setValue( 'nombre_paciente', $paciente->nombre);
-                $template->setValue( 'age', $paciente->edad);
-                $template->setValue( 'sexo', $paciente->sexo);
-                $template->setValue( 'direccion', $paciente->domicilio);
-                $template->setValue( 'telefono_paciente', $paciente->telefono);
-                $template->setValue( 'identidad', $paciente->identidad);
-                $template->setValue( 'fecha_atencion', $paciente->fecha);
-                $template->setValue( 'hora_atencion', $paciente->hora);
-                $template->setValue( 'medico', $paciente->medico);
-                $template->setValue( 'temperatura', $signos_vitales->temperatura);
-                $template->setValue( 'presion_arterial', $signos_vitales->presion_arterial);
-                $template->setValue( 'peso', $signos_vitales->peso);
-                $template->setValue( 'talla', $signos_vitales->talla);
-                $template->setValue( 'sat', $signos_vitales->saturacion);
-                $template->setValue( 'fc', $signos_vitales->frecuencia_cardiaca);
-                $template->setValue( 'fr', $signos_vitales->frecuencia_respiratoria);
-                $template->setValue( 'gmt', $signos_vitales->glucometria);                 
-                $template->setValue( 'motivo_consulta', $consulta_exp_pediatrico->motivo_consulta);
-                $template->setValue( 'historia_enfermedad_actual', $consulta_exp_pediatrico->historia_enfermedad_actual);
-                $template->setValue( 'app', ($consulta_exp_pediatrico->antecedentes_personales_patologicos == null || $consulta_exp_pediatrico->antecedentes_personales_patologicos == '') ? 'No' : 'Si'  );
-                $template->setValue( 'app_descripcion', $consulta_exp_pediatrico->antecedentes_personales_patologicos);                
-                $template->setValue( 'tx', ($consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos == null || $consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos == '') ? 'No' : 'Si' );
-                $template->setValue( 'tx_descripcion', $consulta_exp_pediatrico->tratamiento_antecedentes_personales_patologicos);
-                $template->setValue( 'afp', ($consulta_exp_pediatrico->antecedentes_familiares_patologicos == null || $consulta_exp_pediatrico->antecedentes_familiares_patologicos == '') ? 'No' : 'Si');
-                $template->setValue( 'afp_descripcion', $consulta_exp_pediatrico->antecedentes_familiares_patologicos);
-                $template->setValue( 'ahtq', ($consulta_exp_pediatrico->antecedentes_hospitalarios_quirurgicos == null || $consulta_exp_pediatrico->antecedentes_hospitalarios_quirurgicos == '') ? 'No' : 'Si');               
-                $template->setValue( 'ahtq_descripcion', $consulta_exp_pediatrico->antecedentes_hospitalarios_quirurgicos);               
-                $template->setValue( 'inmunizacion', $consulta_exp_pediatrico->inmunizacion);               
-                $template->setValue( 'alergias', ($consulta_exp_pediatrico->tipo_alergia == null || $consulta_exp_pediatrico->tipo_alergia == '') ? 'No' : 'Si' );               
-                $template->setValue( 'alergias_descripcion', $consulta_exp_pediatrico->tipo_alergia);               
-                $template->setValue( 'nombre', $antecendentes_prenatales->nombre_madre);               
-                $template->setValue( 'edad_ap', $antecendentes_prenatales->edad);               
-                $template->setValue( 'tipo_sangre', $antecendentes_prenatales->tipo_sangre);               
-                $template->setValue( 'ede', ($antecendentes_prenatales->enfermedades_durante_embarazo == null || $consulta_exp_pediatrico->tipo_alergia == '') ? 'No' : 'Si');               
-                $template->setValue( 'ede_descripcion', $consulta_exp_pediatrico->tipo_alergia );               
-                $template->setValue( 'gp', $antecendentes_prenatales->gestas);               
-                $template->setValue( 'np', $antecendentes_prenatales->partos);               
-                $template->setValue( 'nc', $antecendentes_prenatales->cesarias);               
-                $template->setValue( 'cpn', $antecendentes_prenatales->control_prenatal_ultimo_embarazo);               
-                $template->setValue( 'nace', $natalicio->lugar_nacimiento);               
-                $template->setValue( 'apgar', $natalicio->apgar);               
                 
-                $template->setValue( 'peso', $natalicio->peso);               
-                $template->setValue( 'talla_natal', $natalicio->talla);               
-                $template->setValue( 'pc', $natalicio->perimetro_cefalico);               
-                $template->setValue( 'tipo_parto', $natalicio->tipo_parto);               
-                $template->setValue( 'complicaciones_parto', ($natalicio->complicaciones_parto == null || $natalicio->complicaciones_parto == '') ? 'No' : 'Si' );               
-                $template->setValue( 'complicaciones_parto_descripcion', $natalicio->complicaciones_parto);               
-                $template->setValue( 'sonrio', ($desarrollo_psicomotor->sonrio) ? '▣' : '□' );               
-                $template->setValue( 'sostuvo_cabeza', ($desarrollo_psicomotor->sostuvo_cabeza) ? '▣' : '□');               
-                $template->setValue( 'sento', ($desarrollo_psicomotor->se_sento) ? '▣' : '□');               
-                $template->setValue( 'paro', ($desarrollo_psicomotor->se_paro)? '▣' : '□' );               
-                $template->setValue( 'camino_solo', ($desarrollo_psicomotor->comino_solo)? '▣' : '□' );               
-                $template->setValue( 'habla', ($desarrollo_psicomotor->habla )? '▣' : '□' );               
-                $template->setValue( 'control_esfinter', ($desarrollo_psicomotor->control_esfinteres ) ? '▣' : '□');               
-                $template->setValue( 'escolaridad', ($desarrollo_psicomotor->escolaridad_actual == null || $desarrollo_psicomotor->escolaridad_actual == '') ? 'No' : 'Si' );               
-                $template->setValue( 'cual_escolaridad', $desarrollo_psicomotor->escolaridad_actual);               
-                $template->setValue( 'lactancia', ($lactancia->ablactacion == null || $lactancia->ablactacion == '') ? 'No' : 'Si' );               
-                $template->setValue( 'materna', ($lactancia->lactancia_materna == true && $lactancia->lactancia_artificial == false) ? '◉' : '○');               
-                $template->setValue( 'artificial', ($lactancia->lactancia_materna == false && $lactancia->lactancia_artificial == true) ? '◉' : '○');               
-                $template->setValue( 'mixta', ($lactancia->lactancia_materna == true && $lactancia->lactancia_artificial == true) ? '◉' : '○');               
-                $template->setValue( 'dpc', $lactancia->ablactacion);               
-                $template->setValue( 'daa', $lactancia->alimentacion_actual);               
-                $template->setValue( 'examen_fisico', $exa_fisico_diagnostico_indicaciones->examen_fisico );               
-                $template->setValue( 'diagnostico', $exa_fisico_diagnostico_indicaciones->diagnostico);               
-                $template->setValue( 'indicaciones', $exa_fisico_diagnostico_indicaciones->indicaciones);               
-            
+                foreach ($consulta_exp_pediatrico as $row) {
+                                     
+                    $template->setValue( 'motivo_consulta', $row->motivo_consulta);
+                    $template->setValue( 'historia_enfermedad_actual', $row->historia_enfermedad_actual);
+                    $template->setValue( 'app', ($row->antecedentes_personales_patologicos == null || $row->antecedentes_personales_patologicos == '') ? 'No' : 'Si'  );
+                    $template->setValue( 'app_descripcion', $row->antecedentes_personales_patologicos);                
+                    $template->setValue( 'tx', ($row->tratamiento_antecedentes_personales_patologicos == null || $row->tratamiento_antecedentes_personales_patologicos == '') ? 'No' : 'Si' );
+                    $template->setValue( 'tx_descripcion', $row->tratamiento_antecedentes_personales_patologicos);
+                    $template->setValue( 'afp', ($row->antecedentes_familiares_patologicos == null || $row->antecedentes_familiares_patologicos == '') ? 'No' : 'Si');
+                    $template->setValue( 'afp_descripcion', $row->antecedentes_familiares_patologicos);
+                    $template->setValue( 'ahtq', ($row->antecedentes_hospitalarios_quirurgicos == null || $row->antecedentes_hospitalarios_quirurgicos == '') ? 'No' : 'Si');               
+                    $template->setValue( 'ahtq_descripcion', $row->antecedentes_hospitalarios_quirurgicos);               
+                    $template->setValue( 'inmunizacion', $row->inmunizacion);               
+                    $template->setValue( 'alergias', ($row->tipo_alergia == null || $row->tipo_alergia == '') ? 'No' : 'Si' );               
+                    $template->setValue( 'alergias_descripcion', $row->tipo_alergia); 
+                    
+                }
+                
+                foreach ($antecendentes_prenatales as $row) {
+                    
+                    $template->setValue( 'nombre', $row->nombre_madre);               
+                    $template->setValue( 'edad_ap', $row->edad);               
+                    $template->setValue( 'tipo_sangre', $row->tipo_sangre); 
+                    $template->setValue( 'ede', ($row->enfermedades_durante_embarazo == null || $row->tipo_alergia == '') ? 'No' : 'Si');
+                }
+                
+                foreach ($consulta_exp_pediatrico as $row) {
+                    
+                    $template->setValue( 'ede_descripcion', $row->tipo_alergia );
+                }
+                
+                foreach ($antecendentes_prenatales as $row) {
+                    
+                    $template->setValue( 'gp', $row->gestas);               
+                    $template->setValue( 'np', $row->partos);               
+                    $template->setValue( 'nc', $row->cesarias);               
+                    $template->setValue( 'cpn', $row->control_prenatal_ultimo_embarazo);               
+                    
+                }
+                
+                foreach ($natalicio as $rown) {
+                
+                    $template->setValue( 'nace', $rown->lugar_nacimiento);               
+                    $template->setValue( 'apgar', $rown->apgar);
+                    $template->setValue( 'peso', ($rown->peso == null || $rown->peso == '') ? '' : $rown->peso  );               
+                    $template->setValue( 'talla_natal', $rown->talla);               
+                    $template->setValue( 'pc', $rown->perimetro_cefalico);               
+                    $template->setValue( 'tipo_parto', $rown->tipo_parto);               
+                    $template->setValue( 'complicaciones_parto', ($rown->complicaciones_parto == null || $rown->complicaciones_parto == '') ? 'No' : 'Si' );               
+                    $template->setValue( 'complicaciones_parto_descripcion', $rown->complicaciones_parto); 
+                
+                }
+                
+                
+                foreach ($desarrollo_psicomotor as $row) {
+                    
+                    $template->setValue( 'sonrio', ($row->sonrio) ? '▣' : '□' );               
+                    $template->setValue( 'sostuvo_cabeza', ($row->sostuvo_cabeza) ? '▣' : '□');               
+                    $template->setValue( 'sento', ($row->se_sento) ? '▣' : '□');               
+                    $template->setValue( 'paro', ($row->se_paro)? '▣' : '□' );               
+                    $template->setValue( 'camino_solo', ($row->comino_solo)? '▣' : '□' );               
+                    $template->setValue( 'habla', ($row->habla )? '▣' : '□' );               
+                    $template->setValue( 'control_esfinter', ($row->control_esfinteres ) ? '▣' : '□');               
+                    $template->setValue( 'escolaridad', ($row->escolaridad_actual == null || $row->escolaridad_actual == '') ? 'No' : 'Si' );               
+                    $template->setValue( 'cual_escolaridad', $row->escolaridad_actual);               
+                    
+                }
+                
+                foreach ($lactancia as $row) {
+                    
+                    $template->setValue( 'lactancia', ($row->ablactacion == null || $row->ablactacion == '') ? 'No' : 'Si' );               
+                    $template->setValue( 'materna', ($row->lactancia_materna == true && $row->lactancia_artificial == false) ? '◉' : '○');               
+                    $template->setValue( 'artificial', ($row->lactancia_materna == false && $row->lactancia_artificial == true) ? '◉' : '○');               
+                    $template->setValue( 'mixta', ($row->lactancia_materna == true && $row->lactancia_artificial == true) ? '◉' : '○');               
+                    $template->setValue( 'dpc', $row->ablactacion);               
+                    $template->setValue( 'daa', $row->alimentacion_actual);               
+                    
+                }
+                
+                foreach ($exa_fisico_diagnostico_indicaciones as $row) {
+                    
+                    $template->setValue( 'examen_fisico', $row->examen_fisico );               
+                    $template->setValue( 'diagnostico', $row->diagnostico);               
+                    $template->setValue( 'indicaciones', $row->indicaciones);              
+                    
+                }
             
             $tempFile = tempnam(sys_get_temp_dir(), 'PHPWord');
             $template->saveAs($tempFile);
@@ -366,50 +411,52 @@ class ReportesController extends Controller
         $nombre_paciente = null;
         
         try {
-            $estado_edicion_subsiguiente = collect(\DB::select("
+            $estado_edicion_subsiguiente = DB::select("
                 SELECT
                 case 
-                when (now() - g.created_at) <= '24 hour' and r.id = g.id_remision  then 1 
+                when ((now() at time zone 'CST') - g.created_at) <= '24 hour' and r.id = g.id_remision  then 1 
                 else 0 
                 end estado_edicion_subsiguiente, r.id_estado_remision, er.nombre estado
                 from public.tbl_remisiones r
                 join tbl_estados_remisiones er on r.id_estado_remision = er.id
                 left join tbl_exp_ginecologia g on r.id = g.id_remision
                 where r.id_paciente = :id_paciente and r.id = :id_remision and r.deleted_at is null
-        ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]))->first();
+        ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]);
 
             
-            $paciente = collect(\DB::select("
+            $paciente = DB::select("
             select 
             rfp.id,
-             concat(rfp.primer_nombre,' ',rfp.segundo_nombre,' ',rfp.primer_apellido,' ',rfp.segundo_apellido) nombre,
-             case 
-                 when 
+            concat(rfp.primer_nombre,' ',rfp.segundo_nombre,' ',rfp.primer_apellido,' ',rfp.segundo_apellido) nombre,
+            case 
+             when 
                      date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)) >1 
-                 then 
+             then 
                      concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' años') 
-                 else
+             else
                      concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' año') 
-             end edad,
-             case 
-                 when 
+            end edad,
+            case 
+             when 
                      rfp.sexo = 'M' 
-                 then 
+             then 
                      'Masculino'
-                 else 
+             else 
                      'Femenino'
-                 end sexo, 
-             rfp.domicilio, rfp.telefono, rfp.identidad, 
-             to_char(r.created_at,'TMDay')||', '||to_char( r.created_at ,'dd')||' de '||to_char(r.created_at,'TMMonth')||' de '||to_char(r.created_at,'yyyy') fecha,
-             to_char(r.created_at, 'HH12:MI AM') hora,
+             end sexo, 
+            rfp.domicilio, rfp.telefono, rfp.identidad, 
+            ds.nombre_espanol||', '||to_char( r.created_at ,'dd')||' de '||ma.nombre_espanol||' de '||to_char(r.created_at,'yyyy') fecha,
+            to_char(r.created_at, 'HH12:MI AM') hora,
             TRIM(COALESCE(TRIM(pe.primer_nombre)||' ','')||COALESCE(TRIM(pe.segundo_nombre)||' ','')||COALESCE(TRIM(pe.primer_apellido)||' ','')||
             COALESCE(TRIM(pe.segundo_apellido||' '),'') ) medico
-             from reg_ficha_pacientes rfp 
-             join tbl_remisiones r on rfp.id = r.id_paciente
+            from reg_ficha_pacientes rfp 
+            join tbl_remisiones r on rfp.id = r.id_paciente
             join per_empleado pe on pe.id = r.id_medico
-             where rfp.deleted_at is null and r.deleted_at is null
+            join cat_meses_anio ma on ma.id_mes_bd::int = to_char( r.created_at::date,'MM')::int
+            join cat_dias_semana ds on ds.id_dia_bd::text = to_char(r.created_at::date,'D')
+            where rfp.deleted_at is null and r.deleted_at is null
                 and rfp.id = :id_paciente and r.id = :id_remision
-            ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]))->first();
+            ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]);
 
             $tipos_sangre = DB::select("
                 select id, nombre from tbl_tipos_sangre where deleted_at is null order by nombre
@@ -419,24 +466,24 @@ class ReportesController extends Controller
                 select id, descripcion_masa_corporal from tbl_indice_masa_corporal where deleted_at is null
             ");
 
-            $sub_siguiente = collect(\DB::select("
+            $sub_siguiente = DB::select("
                 select count(*) existe from tbl_exp_ginecologia where id_paciente = :id_paciente and deleted_at is null
-            ", ["id_paciente" => $id_paciente]))->first();
+            ", ["id_paciente" => $id_paciente]);
 
-            $signos_vitales = collect(\DB::select("
-                select sv.id_masa_corporal, im.descripcion_masa_corporal masa_corporal, sv.temperatura, sv.presion_arterial, sv.peso, sv.talla, sv.saturacion, sv.frecuencia_cardiaca, sv.frecuencia_respiratoria, sv.glucometria 
+            $signos_vitales = DB::select("
+                select sv.temperatura, sv.presion_arterial, sv.peso, sv.talla, sv.saturacion, sv.frecuencia_cardiaca, sv.frecuencia_respiratoria, sv.glucometria, im.descripcion_masa_corporal as masa_corporal
                 from tbl_signos_vitales sv 
-                join tbl_indice_masa_corporal im ON im.id = sv.id_masa_corporal
+                left join tbl_indice_masa_corporal im ON im.id = sv.id_masa_corporal
                 where sv.id_paciente = :id_paciente and sv.id_expediente = :id_expediente and sv.id_remision = :id_remision and sv.deleted_at is null
-            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]);
 
-            $ginecologia_mc_hea = collect(\DB::select("
+            $ginecologia_mc_hea = DB::select("
                 SELECT motivo_cosulta, motivo_cosulta_semanas_gestionales, motivo_cosulta_examenes, nota_motivo_cosulta, historia_enfermedad_actual
                 FROM public.tbl_exp_ginecologia_mc_hea
                 where id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision and deleted_at is null
-            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]);
 
-            $ginecologia = collect(\DB::select("
+            $ginecologia = DB::select("
                 SELECT gestas, partos, cesareas, abortos, hijos_vivos, hijos_muertos, fecha_parto, atendido, fecha_ultima_mestruacion,  fum_desconoce,
 case when ( fecha_ultima_mestruacion is null ) and (fum_desconoce is null ) then 'No Aplica'
 when ( fecha_ultima_mestruacion is not null ) and (fum_desconoce is null ) then 'Si'
@@ -448,18 +495,18 @@ numero_parejas_sexuales, tipo_enfermedades_trasmision_sexual, vida_sexual_activa
 afp, tipo_antecedentes_inmunoalergicos, habitos, tipos_antecedentes_hospitalarios_quirurgicos, motivo_cosulta,
 motivo_cosulta_semanas_gestionales, motivo_cosulta_examenes, nota_motivo_cosulta, historia_enfermedad_actual
 FROM public.tbl_exp_ginecologia eg
-join public.tbl_tipos_sangre ts ON ts.id = eg.id_tipo_sangre
+left join public.tbl_tipos_sangre ts ON ts.id = eg.id_tipo_sangre
 where id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision and eg.deleted_at is null
-            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]);
 
-            $examen_fisico = collect(\DB::select("
+            $examen_fisico = DB::select("
                 SELECT otorrinolaringologia, cardiopulmonar, abdomen, ginecologico, especulo, trans_vaginal,
                 ultrasonido, diagnosticos, plan, proxima_cita
                 FROM public.tbl_gin_examen_fisico
                 where id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision and deleted_at is null
-            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]);
 
-            $receta = collect(\DB::select("
+            $receta = DB::select("
                 select rm.id_paciente, rm.id_expediente, rm.id_remision,
                 TRIM(
                 COALESCE(TRIM(pe.primer_nombre)||' ','')||
@@ -472,86 +519,103 @@ where id_paciente = :id_paciente and id_expediente = :id_expediente and id_remis
                 join tbl_cargos c on pe.id_cargo = c.id
                 where  pe.deleted_at is null and 
                 rm.id_paciente = :id_paciente and rm.id_expediente = :id_expediente and rm.id_remision = :id_remision
-            ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+            ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]);
             
             $template = new \PhpOffice\PhpWord\TemplateProcessor( $file );
             
             
+            foreach ($paciente as $rowp) {
+                $nombre_paciente = $rowp->nombre;
+                $template->setValue( 'nombre_paciente', $rowp->nombre);
+                $template->setValue( 'age', $rowp->edad);
+                $template->setValue( 'sexo', $rowp->sexo);
+                $template->setValue( 'direccion', $rowp->domicilio);
+                $template->setValue( 'telefono_paciente', $rowp->telefono);
+                $template->setValue( 'identidad', $rowp->identidad);
+                $template->setValue( 'fecha_atencion', $rowp->fecha);
+                $template->setValue( 'hora_atencion', $rowp->hora);
+                $template->setValue( 'medico', $rowp->medico);
+            }
                 
-                $nombre_paciente = $paciente->nombre;
-                
-                $template->setValue( 'nombre_paciente', $paciente->nombre);
-                $template->setValue( 'age', $paciente->edad);
-                $template->setValue( 'sexo', $paciente->sexo);
-                $template->setValue( 'direccion', $paciente->domicilio);
-                $template->setValue( 'telefono_paciente', $paciente->telefono);
-                $template->setValue( 'identidad', $paciente->identidad);
-                $template->setValue( 'fecha_atencion', $paciente->fecha);
-                $template->setValue( 'hora_atencion', $paciente->hora);
-                $template->setValue( 'medico', $paciente->medico);
-                $template->setValue( 'temperatura', $signos_vitales->temperatura);
-                $template->setValue( 'presion_arterial', $signos_vitales->presion_arterial);
-                $template->setValue( 'peso', $signos_vitales->peso);
-                $template->setValue( 'talla', $signos_vitales->talla);
-                $template->setValue( 'sat', $signos_vitales->saturacion);
-                $template->setValue( 'fc', $signos_vitales->frecuencia_cardiaca);
-                $template->setValue( 'fr', $signos_vitales->frecuencia_respiratoria);
-                $template->setValue( 'gmt', $signos_vitales->glucometria);       
-                $template->setValue( 'imc', $signos_vitales->masa_corporal);
-                $template->setValue( 'gestas', $ginecologia->gestas);
-                $template->setValue( 'partos', $ginecologia->partos);
-                $template->setValue( 'cesarea', $ginecologia->cesareas);                
-                $template->setValue( 'abortos', $ginecologia->abortos);
-                $template->setValue( 'hv', $ginecologia->hijos_vivos);
-                $template->setValue( 'hijos_muertos', $ginecologia->hijos_muertos);
-                $template->setValue( 'fup', $ginecologia->fecha_parto);
-                $template->setValue( 'atendido', $ginecologia->atendido);               
-                $template->setValue( 'fum', $ginecologia->fum);               
-                $template->setValue( 'fum_fecha', $ginecologia->fecha_ultima_mestruacion);               
-                $template->setValue( 'fpp', ($ginecologia->fecha_provable_parto == null || $ginecologia->fecha_provable_parto == '') ? 'No Aplica' : 'Si' );               
-                $template->setValue( 'fpp_fecha', $ginecologia->fecha_provable_parto);               
-                $template->setValue( 'citologia', $ginecologia->citologia);               
-                $template->setValue( 'pf', ($ginecologia->descripcion_planificacion_familiar == null || $ginecologia->descripcion_planificacion_familiar == '' ) ? 'No' : 'Si'  );               
-                $template->setValue( 'pf_kg', $ginecologia->descripcion_planificacion_familiar);               
-                $template->setValue( 'tipo_sangre', $ginecologia->tipo_sangre);               
-                $template->setValue( 'vaginosis', ($ginecologia->descripcion_vaginosis == null || $ginecologia->descripcion_vaginosis == '') ? 'No' : 'Si' );               
-                $template->setValue( 'vaginosis_kg', $ginecologia->descripcion_vaginosis);               
-                $template->setValue( 'itu', ($ginecologia->descripcion_infeccion_tracto_urinario == null || $ginecologia->descripcion_infeccion_tracto_urinario == '')? 'No Aplica' : 'Si' );               
-                $template->setValue( 'itu_kg', $ginecologia->descripcion_infeccion_tracto_urinario);               
-                $template->setValue( 'prurito', ($ginecologia->descripcion_prurito == null || $ginecologia->descripcion_prurito == '') ? 'No' : 'Si'  );               
-                $template->setValue( 'prurito_kg', $ginecologia->descripcion_prurito);               
-                $template->setValue( 'menarquia', ($ginecologia->descripcion_menarquia == null || $ginecologia->descripcion_menarquia == '') ? 'No' : 'Si' );               
-                $template->setValue( 'menarquia_kg', $ginecologia->descripcion_menarquia);               
-                $template->setValue( 'ivs', ($ginecologia->edad_inicio_vida_sexual == null || $ginecologia->edad_inicio_vida_sexual == '')? 'No' : 'Si' );               
-                $template->setValue( 'ivs_anios', $ginecologia->edad_inicio_vida_sexual);               
-                $template->setValue( 'nps', $ginecologia->numero_parejas_sexuales);               
-                $template->setValue( 'etsl', ($ginecologia->tipo_enfermedades_trasmision_sexual == null || $ginecologia->tipo_enfermedades_trasmision_sexual == ''));               
-                $template->setValue( 'ets_diagnostico', $ginecologia->tipo_enfermedades_trasmision_sexual);               
-                $template->setValue( 'vsa', $ginecologia->vida_sexual_activa);               
-                $template->setValue( 'app', ($ginecologia->tipo_antecendestes_personales_patologicos == null || $ginecologia->tipo_antecendestes_personales_patologicos == '') ? 'No' : 'Si' );               
-                $template->setValue( 'app_anios', $ginecologia->tipo_antecendestes_personales_patologicos);               
-                $template->setValue( 'afp', ($ginecologia->afp == null || $ginecologia->afp == '') ? 'No' : 'Si' );               
-                $template->setValue( 'afp_anios', $ginecologia->afp);               
-                $template->setValue( 'aia', ($ginecologia->tipo_antecedentes_inmunoalergicos == null || $ginecologia->tipo_antecedentes_inmunoalergicos == '') ? 'No' : 'Si' );               
-                $template->setValue( 'aia_anios', $ginecologia->tipo_antecedentes_inmunoalergicos);               
-                $template->setValue( 'habitos', ($ginecologia->habitos == null || $ginecologia->habitos == '') ? 'No' : 'Si' );               
-                $template->setValue( 'habitos_anios', $ginecologia->habitos);               
-                $template->setValue( 'ahtq', ($ginecologia->tipos_antecedentes_hospitalarios_quirurgicos == null || $ginecologia->tipos_antecedentes_hospitalarios_quirurgicos == '') ? 'No' : 'Si' );               
-                $template->setValue( 'ahtq_anios', $ginecologia->tipos_antecedentes_hospitalarios_quirurgicos);               
-                $template->setValue( 'mcl', ($ginecologia_mc_hea->motivo_cosulta == null || $ginecologia_mc_hea->motivo_cosulta == '') ? 'Ginecología' : 'Obstétrica' );               
-                $template->setValue( 'mc_observacionl', $ginecologia->motivo_cosulta);               
-                $template->setValue( 'hea', $ginecologia_mc_hea->historia_enfermedad_actual);               
-                $template->setValue( 'orl', $examen_fisico->otorrinolaringologia);               
-                $template->setValue( 'cp', $examen_fisico->cardiopulmonar);               
-                $template->setValue( 'abdomen', $examen_fisico->abdomen);               
-                $template->setValue( 'go', $examen_fisico->ginecologico);               
-                $template->setValue( 'especulo', $examen_fisico->especulo);               
-                $template->setValue( 'tv', $examen_fisico->trans_vaginal);               
-                $template->setValue( 'usg', $examen_fisico->ultrasonido);               
-                $template->setValue( 'ix', $examen_fisico->diagnosticos);               
-                $template->setValue( 'plan', $examen_fisico->plan);               
-                $template->setValue( 'proxima_cita', $examen_fisico->proxima_cita);               
+            foreach ($signos_vitales as $rowsv) {
+                $template->setValue( 'temperatura', $rowsv->temperatura);
+                $template->setValue( 'presion_arterial', $rowsv->presion_arterial);
+                $template->setValue( 'peso', $rowsv->peso);
+                $template->setValue( 'talla', $rowsv->talla);
+                $template->setValue( 'sat', $rowsv->saturacion);
+                $template->setValue( 'fc', $rowsv->frecuencia_cardiaca);
+                $template->setValue( 'fr', $rowsv->frecuencia_respiratoria);
+                $template->setValue( 'gmt', $rowsv->glucometria);       
+                $template->setValue( 'imc', $rowsv->masa_corporal);
+            }
             
+            foreach ($ginecologia as $rowg) {
+                $template->setValue( 'gestas', $rowg->gestas);
+                $template->setValue( 'partos', $rowg->partos);
+                $template->setValue( 'cesarea', $rowg->cesareas);                
+                $template->setValue( 'abortos', $rowg->abortos);
+                $template->setValue( 'hv', $rowg->hijos_vivos);
+                $template->setValue( 'hijos_muertos', $rowg->hijos_muertos);
+                $template->setValue( 'fup', $rowg->fecha_parto);
+                $template->setValue( 'atendido', $rowg->atendido);               
+                $template->setValue( 'fum', $rowg->fum);               
+                $template->setValue( 'fum_fecha', $rowg->fecha_ultima_mestruacion);               
+                $template->setValue( 'fpp', ($rowg->fecha_provable_parto == null || $rowg->fecha_provable_parto == '') ? 'No Aplica' : 'Si' );               
+                $template->setValue( 'fpp_fecha', $rowg->fecha_provable_parto);               
+                $template->setValue( 'citologia', $rowg->citologia);               
+                $template->setValue( 'pf', ($rowg->descripcion_planificacion_familiar == null || $rowg->descripcion_planificacion_familiar == '' ) ? 'No' : 'Si'  );               
+                $template->setValue( 'pf_kg', $rowg->descripcion_planificacion_familiar);               
+                $template->setValue( 'tipo_sangre', $rowg->tipo_sangre);               
+                $template->setValue( 'vaginosis', ($rowg->descripcion_vaginosis == null || $rowg->descripcion_vaginosis == '') ? 'No' : 'Si' );               
+                $template->setValue( 'vaginosis_kg', $rowg->descripcion_vaginosis);               
+                $template->setValue( 'itu', ($rowg->descripcion_infeccion_tracto_urinario == null || $rowg->descripcion_infeccion_tracto_urinario == '')? 'No Aplica' : 'Si' );               
+                $template->setValue( 'itu_kg', $rowg->descripcion_infeccion_tracto_urinario);               
+                $template->setValue( 'prurito', ($rowg->descripcion_prurito == null || $rowg->descripcion_prurito == '') ? 'No' : 'Si'  );               
+                $template->setValue( 'prurito_kg', $rowg->descripcion_prurito);               
+                $template->setValue( 'menarquia', ($rowg->descripcion_menarquia == null || $rowg->descripcion_menarquia == '') ? 'No' : 'Si' );               
+                $template->setValue( 'menarquia_kg', $rowg->descripcion_menarquia);               
+                $template->setValue( 'ivs', ($rowg->edad_inicio_vida_sexual == null || $rowg->edad_inicio_vida_sexual == '')? 'No' : 'Si' );               
+                $template->setValue( 'ivs_anios', $rowg->edad_inicio_vida_sexual);               
+                $template->setValue( 'nps', $rowg->numero_parejas_sexuales);               
+                $template->setValue( 'etsl', ($rowg->tipo_enfermedades_trasmision_sexual == null || $rowg->tipo_enfermedades_trasmision_sexual == ''));               
+                $template->setValue( 'ets_diagnostico', $rowg->tipo_enfermedades_trasmision_sexual);               
+                $template->setValue( 'vsa', $rowg->vida_sexual_activa);               
+                $template->setValue( 'app', ($rowg->tipo_antecendestes_personales_patologicos == null || $rowg->tipo_antecendestes_personales_patologicos == '') ? 'No' : 'Si' );               
+                $template->setValue( 'app_anios', $rowg->tipo_antecendestes_personales_patologicos);               
+                $template->setValue( 'afp', ($rowg->afp == null || $rowg->afp == '') ? 'No' : 'Si' );               
+                $template->setValue( 'afp_anios', $rowg->afp);               
+                $template->setValue( 'aia', ($rowg->tipo_antecedentes_inmunoalergicos == null || $rowg->tipo_antecedentes_inmunoalergicos == '') ? 'No' : 'Si' );               
+                $template->setValue( 'aia_anios', $rowg->tipo_antecedentes_inmunoalergicos);               
+                $template->setValue( 'habitos', ($rowg->habitos == null || $rowg->habitos == '') ? 'No' : 'Si' );               
+                $template->setValue( 'habitos_anios', $rowg->habitos);               
+                $template->setValue( 'ahtq', ($rowg->tipos_antecedentes_hospitalarios_quirurgicos == null || $rowg->tipos_antecedentes_hospitalarios_quirurgicos == '') ? 'No' : 'Si' );               
+                $template->setValue( 'ahtq_anios', $rowg->tipos_antecedentes_hospitalarios_quirurgicos);
+            }
+            
+            foreach ($ginecologia_mc_hea as $rowgm) {
+                $template->setValue( 'mcl', ($rowgm->motivo_cosulta == null || $rowgm->motivo_cosulta == '') ? 'Ginecología' : 'Obstétrica' ); 
+            }
+            
+            foreach ($ginecologia as $rowgn) {
+                $template->setValue( 'mc_observacionl', $rowgn->motivo_cosulta); 
+            }
+            
+            foreach ($ginecologia_mc_hea as $rowgmh) {
+                $template->setValue( 'hea', $rowgmh->historia_enfermedad_actual);
+            }
+            
+            foreach ($examen_fisico as $rowe) {
+                $template->setValue( 'orl', $rowe->otorrinolaringologia);               
+                $template->setValue( 'cp', $rowe->cardiopulmonar);               
+                $template->setValue( 'abdomen', $rowe->abdomen);               
+                $template->setValue( 'go', $rowe->ginecologico);               
+                $template->setValue( 'especulo', $rowe->especulo);               
+                $template->setValue( 'tv', $rowe->trans_vaginal);               
+                $template->setValue( 'usg', $rowe->ultrasonido);               
+                $template->setValue( 'ix', $rowe->diagnosticos);               
+                $template->setValue( 'plan', $rowe->plan);               
+                $template->setValue( 'proxima_cita', $rowe->proxima_cita);
+            }
             
             $tempFile = tempnam(sys_get_temp_dir(), 'PHPWord');
             $template->saveAs($tempFile);
@@ -575,76 +639,78 @@ where id_paciente = :id_paciente and id_expediente = :id_expediente and id_remis
         
         try {
             
-            $estado_edicion_subsiguiente = collect(\DB::select("
+            $estado_edicion_subsiguiente = DB::select("
             SELECT
             case 
-            when (now() - g.created_at) <= '24 hour' and r.id = g.id_remision  then 1 
+            when ((now() at time zone 'CST') - g.created_at) <= '24 hour' and r.id = g.id_remision  then 1 
             else 0 
             end estado_edicion_subsiguiente, r.id_estado_remision, er.nombre estado
             from public.tbl_remisiones r
             join tbl_estados_remisiones er on r.id_estado_remision = er.id
             left join tbl_mg_medicina_general g on r.id = g.id_remision
             where r.id_paciente = :id_paciente and r.id = :id_remision and r.deleted_at is null
-            ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]))->first();            
+            ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]);            
 
-            $paciente = collect(\DB::select("
+            $paciente = DB::select("
             select 
             rfp.id,
-             concat(rfp.primer_nombre,' ',rfp.segundo_nombre,' ',rfp.primer_apellido,' ',rfp.segundo_apellido) nombre,
-             case 
-                 when 
+            concat(rfp.primer_nombre,' ',rfp.segundo_nombre,' ',rfp.primer_apellido,' ',rfp.segundo_apellido) nombre,
+            case 
+             when 
                      date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)) >1 
-                 then 
+             then 
                      concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' años') 
-                 else
+             else
                      concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' año') 
-             end edad,
-             case 
-                 when 
+            end edad,
+            case 
+             when 
                      rfp.sexo = 'M' 
-                 then 
+             then 
                      'Masculino'
-                 else 
+             else 
                      'Femenino'
-                 end sexo, 
-             rfp.domicilio, rfp.telefono, rfp.identidad, 
-             to_char(r.created_at,'TMDay')||', '||to_char( r.created_at ,'dd')||' de '||to_char(r.created_at,'TMMonth')||' de '||to_char(r.created_at,'yyyy') fecha,
-             to_char(r.created_at, 'HH12:MI AM') hora,
+             end sexo, 
+            rfp.domicilio, rfp.telefono, rfp.identidad, 
+            ds.nombre_espanol||', '||to_char( r.created_at ,'dd')||' de '||ma.nombre_espanol||' de '||to_char(r.created_at,'yyyy') fecha,
+            to_char(r.created_at, 'HH12:MI AM') hora,
             TRIM(COALESCE(TRIM(pe.primer_nombre)||' ','')||COALESCE(TRIM(pe.segundo_nombre)||' ','')||COALESCE(TRIM(pe.primer_apellido)||' ','')||
             COALESCE(TRIM(pe.segundo_apellido||' '),'') ) medico
-             from reg_ficha_pacientes rfp 
-             join tbl_remisiones r on rfp.id = r.id_paciente
+            from reg_ficha_pacientes rfp 
+            join tbl_remisiones r on rfp.id = r.id_paciente
             join per_empleado pe on pe.id = r.id_medico
-             where rfp.deleted_at is null and r.deleted_at is null
+            join cat_meses_anio ma on ma.id_mes_bd::int = to_char( r.created_at::date,'MM')::int
+            join cat_dias_semana ds on ds.id_dia_bd::text = to_char(r.created_at::date,'D')
+            where rfp.deleted_at is null and r.deleted_at is null
                 and rfp.id = :id_paciente and r.id = :id_remision
-            ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]))->first();
+            ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]);
 
-            $signos_vitales = collect(\DB::select(
+            $signos_vitales = DB::select(
             "SELECT temperatura, presion_arterial, peso, talla, saturacion, frecuencia_cardiaca, frecuencia_respiratoria, glucometria 
             from tbl_signos_vitales
             where id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision and deleted_at is null
-            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+            ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]);
 
-            $glasgow = collect(\DB::select(
+            $glasgow = DB::select(
             "SELECT g.glasgow, g.actividad_ocular, g.respuesta_verval, g.respuesta_motora from public.tbl_mg_glasgow g
             where g.id_paciente = :id_paciente and g.deleted_at is null
-            ",["id_paciente" => $id_paciente]))->first();
+            ",["id_paciente" => $id_paciente]);
 
-            $estado_conciencia = collect(\DB::select(
+            $estado_conciencia = DB::select(
                 "SELECT ec.alerta, ec.coma, ec.estupor, ec.somnoliento from public.tbl_mg_estado_conciencia ec
                 where ec.id_paciente = :id_paciente and ec.id_expediente = :id_expediente and ec.id_remision = :id_remision and ec.deleted_at is null                
-                ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+                ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]);
 
-            $consulta_exp_general = collect(\DB::select(
+            $consulta_exp_general = DB::select(
                 "SELECT antecedentes_patologicos_personales, tratamiento_antecedentes_patologicos_personales, 
                 antecendetes_familiares_patologicos, gestas, partos, cesareas, abortos, fecha_ultima_menstruacion, cuales_alergias, tipo_habitos, 
                 antecendetes_hospitalarios_quirurgicos, motivo_consulta, historia_enfermedad_actual, examen_fisico, diagnostico, indicaciones_tratamiento,
                 proxima_cita
                     FROM public.tbl_mg_medicina_general
                     where id_paciente = :id_paciente and deleted_at is null
-                ",["id_paciente" => $id_paciente]))->first();
+                ",["id_paciente" => $id_paciente]);
                 
-            $receta = collect(\DB::select("
+            $receta = DB::select("
             select rm.id_paciente, rm.id_expediente, rm.id_remision,
             TRIM(
             COALESCE(TRIM(pe.primer_nombre)||' ','')||
@@ -657,57 +723,80 @@ where id_paciente = :id_paciente and id_expediente = :id_expediente and id_remis
             join tbl_cargos c on pe.id_cargo = c.id
             where  pe.deleted_at is null and 
             rm.id_paciente = :id_paciente and rm.id_expediente = :id_expediente and rm.id_remision = :id_remision
-        ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
+        ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]);
             
             
             $template = new \PhpOffice\PhpWord\TemplateProcessor( $file );
             
             
+                foreach ($paciente as $row) {
+
+                    $nombre_paciente = $row->nombre;
+                    $template->setValue( 'nombre_paciente', $row->nombre);
+                    $template->setValue( 'age', $row->edad);
+                    $template->setValue( 'sexo', $row->sexo);
+                    $template->setValue( 'direccion', $row->domicilio);
+                    $template->setValue( 'telefono_paciente', $row->telefono);
+                    $template->setValue( 'identidad', $row->identidad);
+                    $template->setValue( 'fecha_atencion', $row->fecha);
+                    $template->setValue( 'hora_atencion', $row->hora);
+                    $template->setValue( 'medico', $row->medico);
+                }
                 
-                $nombre_paciente = $paciente->nombre;
                 
-                $template->setValue( 'nombre_paciente', $paciente->nombre);
-                $template->setValue( 'age', $paciente->edad);
-                $template->setValue( 'sexo', $paciente->sexo);
-                $template->setValue( 'direccion', $paciente->domicilio);
-                $template->setValue( 'telefono_paciente', $paciente->telefono);
-                $template->setValue( 'identidad', $paciente->identidad);
-                $template->setValue( 'fecha_atencion', $paciente->fecha);
-                $template->setValue( 'hora_atencion', $paciente->hora);
-                $template->setValue( 'medico', $paciente->medico);
-                $template->setValue( 'temperatura', $signos_vitales->temperatura);
-                $template->setValue( 'presion_arterial', $signos_vitales->presion_arterial);
-                $template->setValue( 'peso', $signos_vitales->peso);
-                $template->setValue( 'talla', $signos_vitales->talla);
-                $template->setValue( 'sat', $signos_vitales->saturacion);
-                $template->setValue( 'fc', $signos_vitales->frecuencia_cardiaca);
-                $template->setValue( 'fr', $signos_vitales->frecuencia_respiratoria);
-                $template->setValue( 'gmt', $signos_vitales->glucometria);       
-                $template->setValue( 'glasgow', $glasgow->glasgow);
-                $template->setValue( 'ao', $glasgow->actividad_ocular);
-                $template->setValue( 'rv', $glasgow->respuesta_verval);
-                $template->setValue( 'rm', $glasgow->respuesta_motora);                
-                $template->setValue( 'alerta', $estado_conciencia->alerta);
-                $template->setValue( 'somniliente', $estado_conciencia->somnoliento);
-                $template->setValue( 'estupo', $estado_conciencia->estupor);
-                $template->setValue( 'coma', $estado_conciencia->coma);
-                $template->setValue( 'app', $consulta_exp_general->antecedentes_patologicos_personales);               
-                $template->setValue( 'afp', $consulta_exp_general->antecendetes_familiares_patologicos);               
-                $template->setValue( 'gestas', $consulta_exp_general->gestas);               
-                $template->setValue( 'parto', $consulta_exp_general->partos);               
-                $template->setValue( 'cesarea', $consulta_exp_general->cesareas);               
-                $template->setValue( 'aborto', $consulta_exp_general->abortos);               
-                $template->setValue( 'fum', $consulta_exp_general->fecha_ultima_menstruacion);               
-                $template->setValue( 'aia', $consulta_exp_general->cuales_alergias);               
-                $template->setValue( 'habitos', $consulta_exp_general->tipo_habitos);               
-                $template->setValue( 'ahq', $consulta_exp_general->antecendetes_hospitalarios_quirurgicos);               
-                $template->setValue( 'motivo_consulta', $consulta_exp_general->motivo_consulta);               
-                $template->setValue( 'historia_enfermedad_actual', $consulta_exp_general->historia_enfermedad_actual);               
-                $template->setValue( 'examen_fisico', $consulta_exp_general->examen_fisico);               
-                $template->setValue( 'idx', $consulta_exp_general->diagnostico);               
-                $template->setValue( 'indicaciones_tratamiento', $consulta_exp_general->indicaciones_tratamiento);               
-                $template->setValue( 'proxima_cita', $consulta_exp_general->proxima_cita);               
-            
+                
+                foreach ($signos_vitales as $row) {
+                    
+                    $template->setValue( 'temperatura', $row->temperatura);
+                    $template->setValue( 'presion_arterial', $row->presion_arterial);
+                    $template->setValue( 'peso', $row->peso);
+                    $template->setValue( 'talla', $row->talla);
+                    $template->setValue( 'sat', $row->saturacion);
+                    $template->setValue( 'fc', $row->frecuencia_cardiaca);
+                    $template->setValue( 'fr', $row->frecuencia_respiratoria);
+                    $template->setValue( 'gmt', $row->glucometria); 
+                }
+                
+                
+                foreach ($glasgow as $row) {
+                    
+                    $template->setValue( 'glasgow', $row->glasgow);
+                    $template->setValue( 'ao', $row->actividad_ocular);
+                    $template->setValue( 'rv', $row->respuesta_verval);
+                    $template->setValue( 'rm', $row->respuesta_motora);
+                }
+
+                
+                foreach ($estado_conciencia as $row) {
+                    
+                    $template->setValue( 'alerta', $row->alerta);
+                    $template->setValue( 'somniliente', $row->somnoliento);
+                    $template->setValue( 'estupo', $row->estupor);
+                    $template->setValue( 'coma', $row->coma);
+                }
+                
+                
+                foreach ($consulta_exp_general as $row) {                                    
+                
+                    $template->setValue( 'app', $row->antecedentes_patologicos_personales);               
+                    $template->setValue( 'afp', $row->antecendetes_familiares_patologicos);               
+                    $template->setValue( 'gestas', $row->gestas);               
+                    $template->setValue( 'parto', $row->partos);               
+                    $template->setValue( 'cesarea', $row->cesareas);               
+                    $template->setValue( 'aborto', $row->abortos);               
+                    $template->setValue( 'fum', $row->fecha_ultima_menstruacion);               
+                    $template->setValue( 'aia', $row->cuales_alergias);               
+                    $template->setValue( 'habitos', $row->tipo_habitos);               
+                    $template->setValue( 'ahq', $row->antecendetes_hospitalarios_quirurgicos);               
+                    $template->setValue( 'motivo_consulta', $row->motivo_consulta);               
+                    $template->setValue( 'historia_enfermedad_actual', $row->historia_enfermedad_actual);               
+                    $template->setValue( 'examen_fisico', $row->examen_fisico);               
+                    $template->setValue( 'idx', $row->diagnostico);               
+                    $template->setValue( 'indicaciones_tratamiento', $row->indicaciones_tratamiento);               
+                    $template->setValue( 'proxima_cita', $row->proxima_cita);
+
+
+                }
             
             $tempFile = tempnam(sys_get_temp_dir(), 'PHPWord');
             $template->saveAs($tempFile);

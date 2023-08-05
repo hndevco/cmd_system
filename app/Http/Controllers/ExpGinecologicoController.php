@@ -25,29 +25,32 @@ class ExpGinecologicoController extends Controller
 
         $paciente = collect(\DB::select("
             select 
-            id,
+            fp.id,
             concat(primer_nombre,' ',segundo_nombre,' ',primer_apellido,' ',segundo_apellido) nombre,
             case 
-                when 
-                    date_part('year',age(CURRENT_DATE, fecha_nacimiento)) >1 
-                then 
-                    concat(date_part('year',age(CURRENT_DATE, fecha_nacimiento)),' años') 
-                else
-                    concat(date_part('year',age(CURRENT_DATE, fecha_nacimiento)),' año') 
+                    when 
+                            date_part('year',age(CURRENT_DATE, fecha_nacimiento)) >1 
+                    then 
+                            concat(date_part('year',age(CURRENT_DATE, fecha_nacimiento)),' años') 
+                    else
+                            concat(date_part('year',age(CURRENT_DATE, fecha_nacimiento)),' año') 
             end edad,
             case 
-                when 
-                    sexo = 'M' 
-                then 
-                    'Masculino'
-                else 
-                    'Femenino'
-                end sexo, 
+                    when 
+                            sexo = 'M' 
+                    then 
+                            'Masculino'
+                    else 
+                            'Femenino'
+                    end sexo, 
             domicilio, telefono, identidad, 
-            to_char(current_date,'TMDay')||', '||to_char( current_date ,'dd')||' de '||to_char(current_date,'TMMonth')||' de '||to_char(current_date,'yyyy') fecha,
+            ds.nombre_espanol||', '||to_char( current_date ,'dd')||' de '||ma.nombre_espanol||' de '||to_char(current_date,'yyyy') fecha,
             to_char(current_timestamp, 'HH12:MI AM') hora
-            from reg_ficha_pacientes where deleted_at is null
-            and id = :id_paciente
+            from reg_ficha_pacientes fp
+            join cat_meses_anio ma on ma.id_mes_bd::int = to_char( current_date,'MM')::int
+            join cat_dias_semana ds on ds.id_dia_bd::text = to_char(current_date,'D')
+            where fp.deleted_at is null
+            and fp.id = :id_paciente
         ", ["id_paciente" => $id_paciente]))->first();
 
         $medico = DB::select("
@@ -191,7 +194,7 @@ class ExpGinecologicoController extends Controller
                 (id_paciente, id_expediente, id_remision, temperatura, presion_arterial, peso, talla, saturacion, 
                 frecuencia_cardiaca, frecuencia_respiratoria, id_masa_corporal, glucometria, created_at) values 
                 (:id_paciente, :id_expediente, :id_remision, :temperatura, :presion_arterial, :peso, :talla, :saturacion, :frecuencia_cardiaca, 
-                    :frecuencia_respiratoria, :indice_masa_corporal, :glucometria, now())
+                    :frecuencia_respiratoria, :indice_masa_corporal, :glucometria, (now() at time zone 'CST'))
             ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "temperatura" => $temperatura, "presion_arterial" => $presion_arterial, "peso" => $peso,
                 "talla" => $talla, "saturacion" => $saturacion, "frecuencia_cardiaca" => $frecuencia_cardiaca, "frecuencia_respiratoria" => $frecuencia_respiratoria,
                 "indice_masa_corporal" => $indice_masa_corporal, "glucometria" => $glucometria]);
@@ -200,7 +203,7 @@ class ExpGinecologicoController extends Controller
             INSERT INTO public.tbl_exp_ginecologia_mc_hea(
             id_paciente, id_expediente, id_remision, 
             motivo_cosulta, motivo_cosulta_semanas_gestionales, motivo_cosulta_examenes, nota_motivo_cosulta, historia_enfermedad_actual, created_at)
-            VALUES (:id_paciente, :id_expediente, :id_remision, :mc_ginecologia, :mc_semanas_gestacionales, :mc_examenes, :mc_notas, :historia_enfermedad_actual, now())
+            VALUES (:id_paciente, :id_expediente, :id_remision, :mc_ginecologia, :mc_semanas_gestacionales, :mc_examenes, :mc_notas, :historia_enfermedad_actual, (now() at time zone 'CST'))
             ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision,
                 "mc_ginecologia" => $mc_ginecologia, "mc_semanas_gestacionales" => $mc_semanas_gestacionales, "mc_examenes" => $mc_examenes, "mc_notas" => $mc_notas, "historia_enfermedad_actual" => $historia_enfermedad_actual]);
             //inicia insert antecedentes gineco-obtetricos
@@ -214,7 +217,7 @@ class ExpGinecologicoController extends Controller
                     (:id_paciente, :id_expediente, :id_remision, :gestas, :partos, :cesareas, :abortos, :hijos_vivos, :hijos_muertos, :fecha_ultimo_parto, :atendido, :fecha_ultima_menstruacion, :fum_desconoce, :fpp, 
                     :citologia, :planificacion_familiar, :tipo_sangre, :vaginosis, :infeccion_tracto_urinario, :prurito, :menarquia, :inicio_vida_sexual, :numero_parejas_sexuales, 
                     :enfermedad_transmision_sexual, :vida_sexual_activa, :antecedentes_personales_patologicos, :afp, :antecedentes_inmunoalergicos, :habitos, :antecedentes_hospitalarios_quirurgicos, 
-                    :mc_ginecologia, :mc_semanas_gestacionales, :mc_examenes, :mc_notas, :historia_enfermedad_actual, now())
+                    :mc_ginecologia, :mc_semanas_gestacionales, :mc_examenes, :mc_notas, :historia_enfermedad_actual, (now() at time zone 'CST'))
                 ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "gestas" => $gestas, "partos" => $partos, "cesareas" => $cesareas, "abortos" => $abortos, "hijos_vivos" => $hijos_vivos,
                     "hijos_muertos" => $hijos_muertos, "fecha_ultimo_parto" => $fecha_ultimo_parto, "atendido" => $atendido, "fecha_ultima_menstruacion" => $fecha_ultima_menstruacion, "fum_desconoce"=>$fum_desconoce, "fpp" => $fpp, 
                     "citologia" => $citologia, "planificacion_familiar" => $planificacion_familiar, "tipo_sangre" => $tipo_sangre, "vaginosis" => $vaginosis, "infeccion_tracto_urinario" => $infeccion_tracto_urinario,
@@ -230,7 +233,7 @@ class ExpGinecologicoController extends Controller
                 (id_paciente, id_expediente, id_remision, otorrinolaringologia, cardiopulmonar, abdomen, ginecologico, especulo, trans_vaginal,
                 ultrasonido, diagnosticos, plan, proxima_cita, created_at) values 
                 (:id_paciente, :id_expediente, :id_remision, :otorrinolaringologia, :cardio_pulmonar, :abdomen, :ginecologico, :especulo, :trans_vaginal,
-                :ultrasonido, :diagnosticos, :plan, :proxima_cita, now())
+                :ultrasonido, :diagnosticos, :plan, :proxima_cita, (now() at time zone 'CST'))
             ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "otorrinolaringologia" => $otorrinolaringologia, "cardio_pulmonar" => $cardio_pulmonar,
                 "abdomen" => $abdomen, "ginecologico" => $ginecologico, "especulo" => $especulo, "trans_vaginal" => $trans_vaginal, "ultrasonido" => $ultrasonido,
                 "diagnosticos" => $diagnosticos, "plan" => $plan, "proxima_cita" => $proxima_cita,]);
@@ -238,7 +241,7 @@ class ExpGinecologicoController extends Controller
             DB::select("
                 insert into tbl_receta_medica 
                 (id_paciente, id_expediente, id_remision, id_medico, fecha_elaborada, descripcion_receta, created_at) values
-                (:id_paciente, :id_expediente, :id_remision, :id_medico, now(), :descripcion_receta, now())        
+                (:id_paciente, :id_expediente, :id_remision, :id_medico, (now() at time zone 'CST'), :descripcion_receta, (now() at time zone 'CST'))        
             ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "id_medico" => $id_medico, "descripcion_receta" => $receta]);
             //inicia estado expediente
             DB::select("update tbl_remisiones set id_estado_remision = :estado_expediente where id = :id_remision
@@ -256,7 +259,7 @@ class ExpGinecologicoController extends Controller
                 update tbl_signos_vitales set
                 id_masa_corporal = :indice_masa_corporal, temperatura = :temperatura, presion_arterial = :presion_arterial, peso = :peso, talla = :talla, 
                 saturacion = :saturacion, frecuencia_cardiaca = :frecuencia_cardiaca, frecuencia_respiratoria = :frecuencia_respiratoria, 
-                glucometria = :glucometria, updated_at = now()
+                glucometria = :glucometria, updated_at = (now() at time zone 'CST')
                 where deleted_at is null and
                 id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
             ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "indice_masa_corporal" => $indice_masa_corporal, "temperatura" => $temperatura, "presion_arterial" => $presion_arterial, "peso" => $peso,
@@ -266,7 +269,7 @@ class ExpGinecologicoController extends Controller
             DB::select("
                 UPDATE public.tbl_exp_ginecologia_mc_hea
                 SET motivo_cosulta=:mc_ginecologia, motivo_cosulta_semanas_gestionales=:mc_semanas_gestacionales, motivo_cosulta_examenes=:mc_examenes, 
-                nota_motivo_cosulta=:mc_notas, historia_enfermedad_actual=:historia_enfermedad_actual, updated_at = now()
+                nota_motivo_cosulta=:mc_notas, historia_enfermedad_actual=:historia_enfermedad_actual, updated_at = (now() at time zone 'CST')
                 where deleted_at is null and
                 id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
             ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision,
@@ -282,7 +285,7 @@ class ExpGinecologicoController extends Controller
                     edad_inicio_vida_sexual=:inicio_vida_sexual, numero_parejas_sexuales=:numero_parejas_sexuales, tipo_enfermedades_trasmision_sexual=:enfermedad_transmision_sexual, vida_sexual_activa=:vida_sexual_activa, 
                     tipo_antecendestes_personales_patologicos=:antecedentes_personales_patologicos, afp=:afp, tipo_antecedentes_inmunoalergicos=:antecedentes_inmunoalergicos, habitos=:habitos, 
                     tipos_antecedentes_hospitalarios_quirurgicos=:antecedentes_hospitalarios_quirurgicos, motivo_cosulta=:mc_ginecologia, motivo_cosulta_semanas_gestionales=:mc_semanas_gestacionales, motivo_cosulta_examenes=:mc_examenes, 
-                    nota_motivo_cosulta=:mc_notas, historia_enfermedad_actual=:historia_enfermedad_actual, fum_desconoce=:fum_desconoce, updated_at = now()
+                    nota_motivo_cosulta=:mc_notas, historia_enfermedad_actual=:historia_enfermedad_actual, fum_desconoce=:fum_desconoce, updated_at = (now() at time zone 'CST')
                     where deleted_at is null and
                     id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
                 ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "gestas" => $gestas, "partos" => $partos, "cesareas" => $cesareas, "abortos" => $abortos,
@@ -299,7 +302,7 @@ class ExpGinecologicoController extends Controller
             DB::select("
                 UPDATE public.tbl_gin_examen_fisico
                 SET otorrinolaringologia=:otorrinolaringologia, cardiopulmonar=:cardio_pulmonar, abdomen=:abdomen, ginecologico=:ginecologico, especulo=:especulo, trans_vaginal=:trans_vaginal, 
-                ultrasonido=:ultrasonido, diagnosticos=:diagnosticos, plan=:plan, proxima_cita=:proxima_cita, updated_at = now()
+                ultrasonido=:ultrasonido, diagnosticos=:diagnosticos, plan=:plan, proxima_cita=:proxima_cita, updated_at = (now() at time zone 'CST')
                 where deleted_at is null and
                 id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
             ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "otorrinolaringologia" => $otorrinolaringologia, "cardio_pulmonar" => $cardio_pulmonar, 
@@ -309,7 +312,7 @@ class ExpGinecologicoController extends Controller
             //inicia receta
             DB::select("
                 UPDATE public.tbl_receta_medica SET
-                descripcion_receta= :descripcion_receta, updated_at = now()
+                descripcion_receta= :descripcion_receta, updated_at = (now() at time zone 'CST')
                 where deleted_at is null and
                 id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
             ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, 

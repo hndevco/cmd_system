@@ -26,13 +26,15 @@ class FarmaciaController extends Controller
 
         $recetas = DB::select("
         select rm.id,
-        to_char(rm.created_at,'TMDay')||', '||to_char( rm.created_at ,'dd')||' de '||to_char(rm.created_at,'TMMonth')||' de '||to_char(rm.created_at,'yyyy') fecha,
+        ds.nombre_espanol||', '||to_char( rm.created_at ,'dd')||' de '||ma.nombre_espanol||' de '||to_char(rm.created_at,'yyyy') fecha,
         concat(fp.primer_nombre,' ',fp.segundo_nombre,' ',fp.primer_apellido,' ',fp.segundo_apellido) paciente, ac.nombre area,
         concat(p.primer_nombre,' ', p.primer_apellido) medico, rm.descripcion_receta
         from tbl_receta_medica rm
         join reg_ficha_pacientes fp on rm.id_paciente = fp.id
         join tbl_areas_clinica ac on rm.id_expediente = ac.id
         join per_empleado p on rm.id_medico = p.id
+        join cat_meses_anio ma on ma.id_mes_bd::int = to_char( rm.created_at::date,'MM')::int
+        join cat_dias_semana ds on ds.id_dia_bd::text = to_char(rm.created_at::date,'D')
         where rm.atendido_farmacia is null and rm.deleted_at is null
         ");
         
@@ -43,7 +45,7 @@ class FarmaciaController extends Controller
     public function lista_recetas_atendidas(){
 
         $recetas_atendidas = DB::select("
-        select rm.id,
+        select  rm.id,
         ds.nombre_espanol||', '||to_char( rm.created_at ,'dd')||' de '||ma.nombre_espanol||' de '||to_char(rm.created_at,'yyyy') fecha,
         concat(fp.primer_nombre,' ',fp.segundo_nombre,' ',fp.primer_apellido,' ',fp.segundo_apellido) paciente, ac.nombre area,
         concat(p.primer_nombre,' ', p.primer_apellido) medico, rm.descripcion_receta,
@@ -53,9 +55,9 @@ class FarmaciaController extends Controller
         join reg_ficha_pacientes fp on rm.id_paciente = fp.id
         join tbl_areas_clinica ac on rm.id_expediente = ac.id
         join per_empleado p on rm.id_medico = p.id
-        join cat_meses_anio ma on ma.id_mes_bd = to_char( rm.created_at::date,'MM')
+        join cat_meses_anio ma on ma.id_mes_bd::int = to_char( rm.created_at::date,'MM')::int
         join cat_dias_semana ds on ds.id_dia_bd::text = to_char(rm.created_at::date,'D')
-        join cat_meses_anio ma1 on ma1.id_mes_bd = to_char( rm.atendido_farmacia::date,'MM')
+        join cat_meses_anio ma1 on ma1.id_mes_bd::int = to_char( rm.atendido_farmacia::date,'MM')::int
         join cat_dias_semana ds1 on ds1.id_dia_bd::text = to_char(rm.atendido_farmacia::date,'D')
         where rm.atendido_farmacia is not null and rm.deleted_at is null
         ");
@@ -107,7 +109,7 @@ class FarmaciaController extends Controller
         try{
             DB::select("
             update tbl_receta_medica set atendido_farmacia = 
-                case when :checkboxPacienteAtendido = 1 then now() else null end 
+                case when :checkboxPacienteAtendido = 1 then (now() at time zone 'CST') else null end 
             where id = :id_receta
             ", ["id_receta" => $id_receta, "checkboxPacienteAtendido" => $checkboxPacienteAtendido]);
 

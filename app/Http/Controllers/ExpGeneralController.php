@@ -202,7 +202,7 @@ class ExpGeneralController extends Controller
             (id_paciente, id_expediente, temperatura, presion_arterial, peso, talla, saturacion, 
             frecuencia_cardiaca, frecuencia_respiratoria, id_masa_corporal, glucometria, created_at, id_remision) values 
             (:id_paciente, :id_expediente, :temperatura, :presion_arterial, :peso, :talla, :saturacion, :frecuencia_cardiaca, 
-             :frecuencia_respiratoria, null, :glucometria, now(), :id_remision )",
+             :frecuencia_respiratoria, null, :glucometria, (now() at time zone 'CST'), :id_remision )",
             ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "temperatura" => $temperatura, "presion_arterial" => $presion_arterial, "peso" => $peso,
             "talla" => $talla, "saturacion" => $saturacion, "frecuencia_cardiaca" => $frecuencia_cardiaca, "frecuencia_respiratoria" => $frecuencia_respiratoria,
             "glucometria" => $glucometria, "id_remision" => $id_remision]);
@@ -213,7 +213,7 @@ class ExpGeneralController extends Controller
             id_paciente, id_expediente, id_remision, motivo_consulta, historia_enfermedad_actual, examen_fisico, 
             diagnostico, indicaciones_tratamiento, proxima_cita, created_at)
             VALUES (:id_paciente, :id_expediente, :id_remision, :motivo_consulta, 
-                :historia_enfermedad_actual, :examen_fisico, :diagnostico, :indicaciones_tratamiento, :proxima_cita, now() )",
+                :historia_enfermedad_actual, :examen_fisico, :diagnostico, :indicaciones_tratamiento, :proxima_cita, (now() at time zone 'CST') )",
                 ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision,
                     "motivo_consulta" => $motivo_consulta, "historia_enfermedad_actual" => $historia_enfermedad_actual, "examen_fisico" => $examen_fisico, "diagnostico" => $diagnostico,
                     "indicaciones_tratamiento" => $indicaciones_tratamiento, "proxima_cita" => $proxima_cita
@@ -223,7 +223,7 @@ class ExpGeneralController extends Controller
         //inicio estado conciencia
         DB::select("INSERT INTO public.tbl_mg_estado_conciencia(
             id_paciente, id_expediente, alerta, somnoliento, estupor, coma, created_at, id_remision)
-            VALUES (:id_paciente, :id_expediente, :alerta,  :somnoliento, :estupor, :coma, now(), :id_remision )",
+            VALUES (:id_paciente, :id_expediente, :alerta,  :somnoliento, :estupor, :coma, (now() at time zone 'CST'), :id_remision )",
             ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "alerta" => $alerta, "somnoliento" => $somnoliento, "estupor" => $estupor,"coma" => $coma, "id_remision" => $id_remision]
         );
         //fin estado conciencia
@@ -232,7 +232,7 @@ class ExpGeneralController extends Controller
             DB::select("INSERT INTO public.tbl_mg_glasgow(
                 id_paciente, id_expediente, glasgow, actividad_ocular, respuesta_verval, respuesta_motora, 
                created_at, id_remision)
-               VALUES (:id_paciente, :id_expediente, :glasgow, :actividad_ocular, :respuesta_verval, :respuesta_motora, now(), :id_remision )", 
+               VALUES (:id_paciente, :id_expediente, :glasgow, :actividad_ocular, :respuesta_verval, :respuesta_motora, (now() at time zone 'CST'), :id_remision )", 
                [ "id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "glasgow" => $glasgow,
                "actividad_ocular" => $actividad_ocular, "respuesta_verval" => $respuesta_verval, "respuesta_motora" => $respuesta_motora, "id_remision" => $id_remision ]);
         //fin insert tbl_mg_glasgow      
@@ -249,7 +249,7 @@ class ExpGeneralController extends Controller
                 :tratamiento_antecedentes_patologicos_personales, :antecendetes_familiares_patologicos, 
                 :gestas, :partos, :cesareas, :abortos, :fecha_ultima_menstruacion, :cuales_alergias, 
                 :tipo_habitos, :antecendetes_hospitalarios_quirurgicos, :motivo_consulta, 
-                :historia_enfermedad_actual, :examen_fisico, :diagnostico, :indicaciones_tratamiento, :proxima_cita, now(), :id_remision)",
+                :historia_enfermedad_actual, :examen_fisico, :diagnostico, :indicaciones_tratamiento, :proxima_cita, (now() at time zone 'CST'), :id_remision)",
                 ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "tratamiento_antecedentes_patologicos_personales" => $tratamiento_antecedentes_patologicos_personales,
                 "antecendetes_familiares_patologicos" => $antecendetes_familiares_patologicos,
                 "gestas" => $gestas, "partos" => $partos, "cesareas" => $cesareas, "abortos" => $abortos,
@@ -263,7 +263,7 @@ class ExpGeneralController extends Controller
     //}
         DB::select("INSERT into tbl_receta_medica 
         (id_paciente, id_expediente, id_medico, fecha_elaborada, descripcion_receta, created_at, id_remision) values
-        (:id_paciente, :id_expediente, :id_medico, now(), :descripcion_receta, now(), :id_remision)        
+        (:id_paciente, :id_expediente, :id_medico, (now() at time zone 'CST'), :descripcion_receta, (now() at time zone 'CST'), :id_remision)        
         ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_medico" => $id_medico, "descripcion_receta" => $receta, "id_remision" => $id_remision]);
       
         //inicia estado expediente
@@ -281,7 +281,7 @@ class ExpGeneralController extends Controller
         DB::select("UPDATE tbl_signos_vitales set
         temperatura = :temperatura, presion_arterial = :presion_arterial, peso = :peso, talla = :talla, 
         saturacion = :saturacion, frecuencia_cardiaca = :frecuencia_cardiaca, frecuencia_respiratoria = :frecuencia_respiratoria, 
-        glucometria = :glucometria, updated_at = now()
+        glucometria = :glucometria, updated_at = (now() at time zone 'CST')
         where deleted_at is null and
         id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
     ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "temperatura" => $temperatura, "presion_arterial" => $presion_arterial, "peso" => $peso,
@@ -292,7 +292,7 @@ class ExpGeneralController extends Controller
     //inicia update tbl_mg_consulta_general
         DB::select("UPDATE public.tbl_mg_consulta_general
             SET  motivo_consulta=:motivo_consulta, historia_enfermedad_actual=:historia_enfermedad_actual,
-            examen_fisico=:examen_fisico, diagnostico=:diagnostico, indicaciones_tratamiento=:indicaciones_tratamiento, proxima_cita=:proxima_cita,  updated_at= now()
+            examen_fisico=:examen_fisico, diagnostico=:diagnostico, indicaciones_tratamiento=:indicaciones_tratamiento, proxima_cita=:proxima_cita,  updated_at= (now() at time zone 'CST')
             WHERE deleted_at is null and                id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision",
                 ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision,
                             "motivo_consulta" => $motivo_consulta, "historia_enfermedad_actual" => $historia_enfermedad_actual, "examen_fisico" => $examen_fisico, "diagnostico" => $diagnostico,
@@ -303,7 +303,7 @@ class ExpGeneralController extends Controller
     //inicia glasgow
         DB::select("UPDATE public.tbl_mg_glasgow
         SET glasgow=:glasgow, actividad_ocular=:actividad_ocular, respuesta_verval=:respuesta_verval, 
-        respuesta_motora=:respuesta_motora, updated_at=now()
+        respuesta_motora=:respuesta_motora, updated_at=(now() at time zone 'CST')
         WHERE deleted_at is null and
             id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
         ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "glasgow" => $glasgow,
@@ -313,7 +313,7 @@ class ExpGeneralController extends Controller
     //inicio estado conciencia
         DB::select("UPDATE public.tbl_mg_estado_conciencia
         SET   alerta=:alerta, somnoliento=:somnoliento,
-        estupor=:estupor, coma=:coma, updated_at=now(), id_remision=:id_remision
+        estupor=:estupor, coma=:coma, updated_at=(now() at time zone 'CST'), id_remision=:id_remision
         WHERE id_paciente=:id_paciente and id_expediente=:id_expediente and id_remision=:id_remision
         ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "alerta" => $alerta,
           "somnoliento" => $somnoliento, "estupor" => $estupor, "coma" => $coma
@@ -326,7 +326,7 @@ class ExpGeneralController extends Controller
         fecha_ultima_menstruacion=:fecha_ultima_menstruacion, cuales_alergias=:cuales_alergias, 
         tipo_habitos=:tipo_habitos, antecendetes_hospitalarios_quirurgicos=:antecendetes_hospitalarios_quirurgicos, motivo_consulta=:motivo_consulta,
         historia_enfermedad_actual=:historia_enfermedad_actual, examen_fisico=:examen_fisico, diagnostico=:diagnostico,
-        indicaciones_tratamiento=:indicaciones_tratamiento, proxima_cita=:proxima_cita, updated_at=now(), id_remision=:id_remision
+        indicaciones_tratamiento=:indicaciones_tratamiento, proxima_cita=:proxima_cita, updated_at=(now() at time zone 'CST'), id_remision=:id_remision
         WHERE id_paciente=:id_paciente and id_expediente=:id_expediente and id_remision=:id_remision
         ",[
             "id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, "tratamiento_antecedentes_patologicos_personales" => $tratamiento_antecedentes_patologicos_personales,
@@ -340,7 +340,7 @@ class ExpGeneralController extends Controller
 
         DB::select("
         UPDATE public.tbl_receta_medica SET
-        descripcion_receta= :descripcion_receta, updated_at = now()
+        descripcion_receta= :descripcion_receta, updated_at = (now() at time zone 'CST')
         where deleted_at is null and
         id_paciente = :id_paciente and id_expediente = :id_expediente and id_remision = :id_remision
     ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, 

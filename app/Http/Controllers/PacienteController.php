@@ -149,7 +149,7 @@ class PacienteController extends Controller
                 "
             INSERT INTO public.reg_ficha_pacientes(
                 identidad, primer_nombre, segundo_nombre, primer_apellido, segundo_apellido, fecha_nacimiento, sexo, telefono, domicilio, nombre_padre, nombre_madre, nombre_tutor, created_at, updated_at, id_departamento, id_municipio)
-                VALUES ( :identidad, upper(:primer_nombre), upper(:segundo_nombre), upper(:primer_apellido), upper(:segundo_apellido), :fecha_nacimiento, :sexo, :telefono, upper(:domicilio), upper(:nombre_padre), upper(:nombre_madre), upper(:nombre_tutor), now(), now(), :id_departamento, :id_municipio)",
+                VALUES ( :identidad, upper(:primer_nombre), upper(:segundo_nombre), upper(:primer_apellido), upper(:segundo_apellido), :fecha_nacimiento, :sexo, :telefono, upper(:domicilio), upper(:nombre_padre), upper(:nombre_madre), upper(:nombre_tutor), (now() at time zone 'CST'), (now() at time zone 'CST'), :id_departamento, :id_municipio)",
                 [
                     'identidad' => $identidad,
                     'primer_nombre' => $primer_nombre,
@@ -252,7 +252,7 @@ class PacienteController extends Controller
                 nombre_padre=upper(:nombre_padre), 
                 nombre_madre=upper(:nombre_madre), 
                 nombre_tutor=upper(:nombre_tutor), 
-                UPDATED_AT=now()
+                UPDATED_AT=(now() at time zone 'CST')
             WHERE id=:id_paciente;",
                 [   
                     'id_paciente'=>$id_paciente,
@@ -290,30 +290,33 @@ class PacienteController extends Controller
         $lab_leer_examen = session('lab_leer_examen');
         $paciente = collect(\DB::select("
             select 
-            id,
+            fp.id,
             concat(primer_nombre,' ',segundo_nombre,' ',primer_apellido,' ',segundo_apellido) nombre,
             case 
-                when 
-                    date_part('year',age(CURRENT_DATE, fecha_nacimiento)) >1 
-                then 
-                    concat(date_part('year',age(CURRENT_DATE, fecha_nacimiento)),' años') 
-                else
-                    concat(date_part('year',age(CURRENT_DATE, fecha_nacimiento)),' año') 
+                    when 
+                            date_part('year',age(CURRENT_DATE, fecha_nacimiento)) >1 
+                    then 
+                            concat(date_part('year',age(CURRENT_DATE, fecha_nacimiento)),' años') 
+                    else
+                            concat(date_part('year',age(CURRENT_DATE, fecha_nacimiento)),' año') 
             end edad,
             case 
-                when 
-                    sexo = 'M' 
-                then 
-                    'Masculino'
-                else 
-                    'Femenino'
-                end sexo, 
+                    when 
+                            sexo = 'M' 
+                    then 
+                            'Masculino'
+                    else 
+                            'Femenino'
+                    end sexo, 
             domicilio, telefono, 
-            concat(substr(identidad,1,4),'-',substr(identidad,5,4),'-',substr(identidad,9,5)) identidad,  
-            to_char(current_date,'TMDay')||', '||to_char( current_date ,'dd')||' de '||to_char(current_date,'TMMonth')||' de '||to_char(current_date,'yyyy') fecha,
+            concat(substr(identidad,1,4),'-',substr(identidad,5,4),'-',substr(identidad,9,5)) identidad,
+            ds.nombre_espanol||', '||to_char( current_date ,'dd')||' de '||ma.nombre_espanol||' de '||to_char(current_date,'yyyy') fecha,
             to_char(current_timestamp, 'HH12:MI AM') hora
-            from reg_ficha_pacientes where deleted_at is null
-            and id = :id_paciente
+            from reg_ficha_pacientes fp
+            join cat_meses_anio ma on ma.id_mes_bd::int = to_char( current_date,'MM')::int
+            join cat_dias_semana ds on ds.id_dia_bd::text = to_char(current_date,'D')
+            where fp.deleted_at is null
+            and fp.id = :id_paciente
         ", ["id_paciente" => $id_paciente]))->first();
 
         return view("historial_clinico.master_historial_clinico")
@@ -336,30 +339,31 @@ class PacienteController extends Controller
         $arc_escribir_otros_archivos = session('arc_escribir_otros_archivos');
         $paciente = collect(\DB::select("
             select 
-            id,
+            fp.id,
             concat(primer_nombre,' ',segundo_nombre,' ',primer_apellido,' ',segundo_apellido) nombre,
             case 
-                when 
-                    date_part('year',age(CURRENT_DATE, fecha_nacimiento)) >1 
-                then 
-                    concat(date_part('year',age(CURRENT_DATE, fecha_nacimiento)),' años') 
-                else
-                    concat(date_part('year',age(CURRENT_DATE, fecha_nacimiento)),' año') 
+                    when 
+                            date_part('year',age(CURRENT_DATE, fecha_nacimiento)) >1 
+                    then 
+                            concat(date_part('year',age(CURRENT_DATE, fecha_nacimiento)),' años') 
+                    else
+                            concat(date_part('year',age(CURRENT_DATE, fecha_nacimiento)),' año') 
             end edad,
             case 
-                when 
-                    sexo = 'M' 
-                then 
-                    'Masculino'
-                else 
-                    'Femenino'
-                end sexo, 
+                    when 
+                            sexo = 'M' 
+                    then 
+                            'Masculino'
+                    else 
+                            'Femenino'
+                    end sexo, 
             domicilio, telefono, 
             concat(substr(identidad,1,4),'-',substr(identidad,5,4),'-',substr(identidad,9,5)) identidad,  
-            to_char(current_date,'TMDay')||', '||to_char( current_date ,'dd')||' de '||to_char(current_date,'TMMonth')||' de '||to_char(current_date,'yyyy') fecha,
+            ds.nombre_espanol||', '||to_char( current_date ,'dd')||' de '||ma.nombre_espanol||' de '||to_char(current_date,'yyyy') fecha,
             to_char(current_timestamp, 'HH12:MI AM') hora
-            from reg_ficha_pacientes where deleted_at is null
-            and id = :id_paciente
+            from reg_ficha_pacientes fp
+            where fp.deleted_at is null
+            and fp.id = :id_paciente
         ", ["id_paciente" => $id_paciente]))->first();
 
         return view("archivos.archivos_historial")
@@ -379,10 +383,14 @@ class PacienteController extends Controller
         $historial_clincico = DB::select("
         select r.id, r.id_paciente, r.id_area, 
         to_char(r.created_at,'TMDay')||', '||to_char( r.created_at ,'dd')||' de '||to_char(r.created_at,'TMMonth')||' de '||to_char(r.created_at,'yyyy') fecha, 
+        ds.nombre_espanol||', '||to_char( r.created_at ,'dd')||' de '||ma.nombre_espanol||' de '||to_char(r.created_at,'yyyy') fecha,
         ac.nombre area, concat(p.primer_nombre,' ', p.primer_apellido) medico from tbl_remisiones r
         join tbl_areas_clinica ac on r.id_area = ac.id
         join per_empleado p on r.id_medico = p.id
-        where r.id_paciente = :id_paciente /*and r.id_estado_remision = 5 and r.id_estado_remision not in (1,2)*/ and r.deleted_at is null
+        join cat_meses_anio ma on ma.id_mes_bd::int = to_char( r.created_at::date,'MM')::int
+        join cat_dias_semana ds on ds.id_dia_bd::text = to_char(r.created_at::date,'D')
+        where r.id_paciente = :id_paciente /*and r.id_estado_remision = 5 and r.id_estado_remision not in (1,2)*/ 
+        and r.deleted_at is null
         order by r.created_at desc
         ", ["id_paciente" => $id_paciente]);
 
@@ -404,7 +412,7 @@ class PacienteController extends Controller
         $estado_edicion = collect(\DB::select("
             SELECT
             case 
-            when (now() - r.created_at) <= '24 hour' then 1 
+            when ((now() at time zone 'CST') - r.created_at) <= '24 hour' then 1 
             when r.id_estado_remision = 3 then 1 
             else 0 
             end estado_edicion, r.id_estado_remision, er.nombre estado
@@ -419,7 +427,7 @@ class PacienteController extends Controller
             $estado_edicion_subsiguiente = collect(\DB::select("
                 SELECT
                 case 
-                when (now() - p.created_at) <= '24 hour' and r.id = p.id_remision  then 1 
+                when ((now() at time zone 'CST') - p.created_at) <= '24 hour' and r.id = p.id_remision  then 1 
                 else 0 
                 end estado_edicion_subsiguiente, r.id_estado_remision, er.nombre estado
                 from public.tbl_remisiones r
@@ -433,31 +441,33 @@ class PacienteController extends Controller
             $paciente = collect(\DB::select("
             select 
             rfp.id,
-             concat(rfp.primer_nombre,' ',rfp.segundo_nombre,' ',rfp.primer_apellido,' ',rfp.segundo_apellido) nombre,
-             case 
-                 when 
+            concat(rfp.primer_nombre,' ',rfp.segundo_nombre,' ',rfp.primer_apellido,' ',rfp.segundo_apellido) nombre,
+            case 
+             when 
                      date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)) >1 
-                 then 
+             then 
                      concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' años') 
-                 else
+             else
                      concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' año') 
-             end edad,
-             case 
-                 when 
+            end edad,
+            case 
+             when 
                      rfp.sexo = 'M' 
-                 then 
+             then 
                      'Masculino'
-                 else 
+             else 
                      'Femenino'
-                 end sexo, 
-             rfp.domicilio, rfp.telefono, rfp.identidad, 
-             to_char(r.created_at,'TMDay')||', '||to_char( r.created_at ,'dd')||' de '||to_char(r.created_at,'TMMonth')||' de '||to_char(r.created_at,'yyyy') fecha,
-             to_char(r.created_at, 'HH12:MI AM') hora,
-             extract(YEAR FROM age(now()::DATE ,fecha_nacimiento::DATE))*12 + extract(MONTH FROM age (to_char(now(), 'YYYY/MM/DD')::DATE, fecha_nacimiento::DATE)) meses
-             from reg_ficha_pacientes rfp 
-             join tbl_remisiones r on rfp.id = r.id_paciente
-             where rfp.deleted_at is null and r.deleted_at is null
-                and rfp.id = :id_paciente and r.id = :id_remision
+             end sexo, 
+            rfp.domicilio, rfp.telefono, rfp.identidad, 
+            ds.nombre_espanol||', '||to_char( r.created_at ,'dd')||' de '||ma.nombre_espanol||' de '||to_char(r.created_at,'yyyy') fecha,
+            to_char(r.created_at, 'HH12:MI AM') hora,
+            extract(YEAR FROM age(now()::DATE ,fecha_nacimiento::DATE))*12 + extract(MONTH FROM age (to_char((now() at time zone 'CST'), 'YYYY/MM/DD')::DATE, fecha_nacimiento::DATE)) meses
+            from reg_ficha_pacientes rfp 
+            join tbl_remisiones r on rfp.id = r.id_paciente
+            join cat_meses_anio ma on ma.id_mes_bd::int = to_char( r.created_at::date,'MM')::int
+            join cat_dias_semana ds on ds.id_dia_bd::text = to_char(r.created_at::date,'D')
+            where rfp.deleted_at is null and r.deleted_at is null
+            and rfp.id = :id_paciente and r.id = :id_remision
             ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]))->first();
 
             $medico = DB::select("
@@ -610,7 +620,7 @@ class PacienteController extends Controller
             $estado_edicion_subsiguiente = collect(\DB::select("
             SELECT
             case 
-            when (now() - g.created_at) <= '24 hour' and r.id = g.id_remision  then 1 
+            when ((now() at time zone 'CST') - g.created_at) <= '24 hour' and r.id = g.id_remision  then 1 
             else 0 
             end estado_edicion_subsiguiente, r.id_estado_remision, er.nombre estado
             from public.tbl_remisiones r
@@ -624,30 +634,32 @@ class PacienteController extends Controller
             $paciente = collect(\DB::select("
             select 
             rfp.id,
-             concat(rfp.primer_nombre,' ',rfp.segundo_nombre,' ',rfp.primer_apellido,' ',rfp.segundo_apellido) nombre,
-             case 
-                 when 
+            concat(rfp.primer_nombre,' ',rfp.segundo_nombre,' ',rfp.primer_apellido,' ',rfp.segundo_apellido) nombre,
+            case 
+             when 
                      date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)) >1 
-                 then 
+             then 
                      concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' años') 
-                 else
+             else
                      concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' año') 
-             end edad,
-             case 
-                 when 
+            end edad,
+            case 
+             when 
                      rfp.sexo = 'M' 
-                 then 
+             then 
                      'Masculino'
-                 else 
+             else 
                      'Femenino'
-                 end sexo, 
-             rfp.domicilio, rfp.telefono, rfp.identidad, 
-             to_char(r.created_at,'TMDay')||', '||to_char( r.created_at ,'dd')||' de '||to_char(r.created_at,'TMMonth')||' de '||to_char(r.created_at,'yyyy') fecha,
-             to_char(r.created_at, 'HH12:MI AM') hora
-             from reg_ficha_pacientes rfp 
-             join tbl_remisiones r on rfp.id = r.id_paciente
-             where rfp.deleted_at is null and r.deleted_at is null
-                and rfp.id = :id_paciente and r.id = :id_remision
+             end sexo, 
+            rfp.domicilio, rfp.telefono, rfp.identidad, 
+            ds.nombre_espanol||', '||to_char( r.created_at ,'dd')||' de '||ma.nombre_espanol||' de '||to_char(r.created_at,'yyyy') fecha,
+            to_char(r.created_at, 'HH12:MI AM') hora
+            from reg_ficha_pacientes rfp 
+            join tbl_remisiones r on rfp.id = r.id_paciente
+            join cat_meses_anio ma on ma.id_mes_bd::int = to_char( r.created_at::date,'MM')::int
+            join cat_dias_semana ds on ds.id_dia_bd::text = to_char(r.created_at::date,'D')
+            where rfp.deleted_at is null and r.deleted_at is null
+            and rfp.id = :id_paciente and r.id = :id_remision
             ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]))->first();
 
             $signos_vitales = collect(\DB::select(
@@ -710,7 +722,7 @@ class PacienteController extends Controller
             $estado_edicion_subsiguiente = collect(\DB::select("
                 SELECT
                 case 
-                when (now() - g.created_at) <= '24 hour' and r.id = g.id_remision  then 1 
+                when ((now() at time zone 'CST') - g.created_at) <= '24 hour' and r.id = g.id_remision  then 1 
                 else 0 
                 end estado_edicion_subsiguiente, r.id_estado_remision, er.nombre estado
                 from public.tbl_remisiones r
@@ -724,30 +736,32 @@ class PacienteController extends Controller
             $paciente = collect(\DB::select("
             select 
             rfp.id,
-             concat(rfp.primer_nombre,' ',rfp.segundo_nombre,' ',rfp.primer_apellido,' ',rfp.segundo_apellido) nombre,
-             case 
-                 when 
+            concat(rfp.primer_nombre,' ',rfp.segundo_nombre,' ',rfp.primer_apellido,' ',rfp.segundo_apellido) nombre,
+            case 
+             when 
                      date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)) >1 
-                 then 
+             then 
                      concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' años') 
-                 else
+             else
                      concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' año') 
-             end edad,
-             case 
-                 when 
+            end edad,
+            case 
+             when 
                      rfp.sexo = 'M' 
-                 then 
+             then 
                      'Masculino'
-                 else 
+             else 
                      'Femenino'
-                 end sexo, 
-             rfp.domicilio, rfp.telefono, rfp.identidad, 
-             to_char(r.created_at,'TMDay')||', '||to_char( r.created_at ,'dd')||' de '||to_char(r.created_at,'TMMonth')||' de '||to_char(r.created_at,'yyyy') fecha,
-             to_char(r.created_at, 'HH12:MI AM') hora
-             from reg_ficha_pacientes rfp 
-             join tbl_remisiones r on rfp.id = r.id_paciente
-             where rfp.deleted_at is null and r.deleted_at is null
-                and rfp.id = :id_paciente and r.id = :id_remision
+             end sexo, 
+            rfp.domicilio, rfp.telefono, rfp.identidad,
+            ds.nombre_espanol||', '||to_char( r.created_at ,'dd')||' de '||ma.nombre_espanol||' de '||to_char(r.created_at,'yyyy') fecha,
+            to_char(r.created_at, 'HH12:MI AM') hora
+            from reg_ficha_pacientes rfp 
+            join tbl_remisiones r on rfp.id = r.id_paciente
+            join cat_meses_anio ma on ma.id_mes_bd::int = to_char( r.created_at::date,'MM')::int
+            join cat_dias_semana ds on ds.id_dia_bd::text = to_char(r.created_at::date,'D')
+            where rfp.deleted_at is null and r.deleted_at is null
+            and rfp.id = :id_paciente and r.id = :id_remision
             ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]))->first();
 
             $medico = DB::select("
@@ -846,35 +860,37 @@ class PacienteController extends Controller
             rfp.id,
             concat(rfp.primer_nombre,' ',rfp.segundo_nombre,' ',rfp.primer_apellido,' ',rfp.segundo_apellido) nombre,
             case 
-                when 
-                    date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)) >1 
-                then 
-                    concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' años') 
-                else
-                    concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' año') 
+                    when 
+                            date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)) >1 
+                    then 
+                            concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' años') 
+                    else
+                            concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' año') 
             end edad,
             case 
-                when 
-                    rfp.sexo = 'M' 
-                then 
-                    'Masculino'
-                else 
-                    'Femenino'
-                end sexo, 
+                    when 
+                            rfp.sexo = 'M' 
+                    then 
+                            'Masculino'
+                    else 
+                            'Femenino'
+                    end sexo, 
             rfp.domicilio, rfp.telefono, rfp.identidad, 
-            to_char(r.created_at,'TMDay')||', '||to_char( r.created_at ,'dd')||' de '||to_char(r.created_at,'TMMonth')||' de '||to_char(r.created_at,'yyyy') fecha,
+            ds.nombre_espanol||', '||to_char( r.created_at ,'dd')||' de '||ma.nombre_espanol||' de '||to_char(r.created_at,'yyyy') fecha,
             to_char(r.created_at, 'HH12:MI AM') hora,
             ac.nombre area,
             TRIM(
-                    COALESCE(TRIM(p.primer_nombre)||' ','')||
-                    COALESCE(TRIM(p.primer_apellido||' '),'')
-                ) medico
+                            COALESCE(TRIM(p.primer_nombre)||' ','')||
+                            COALESCE(TRIM(p.primer_apellido||' '),'')
+                    ) medico
             from reg_ficha_pacientes rfp 
             join tbl_remisiones r on rfp.id = r.id_paciente
             join tbl_areas_clinica ac ON ac.id = r.id_area
             join per_empleado p ON p.id = r.id_medico
+            join cat_meses_anio ma on ma.id_mes_bd::int = to_char( r.created_at::date,'MM')::int
+            join cat_dias_semana ds on ds.id_dia_bd::text = to_char(r.created_at::date,'D')
             where rfp.deleted_at is null and r.deleted_at is null
-                and rfp.id = :id_paciente and r.id = :id_remision
+            and rfp.id = :id_paciente and r.id = :id_remision
             ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]))->first();
 
         return view('historial_clinico.examenes_laboratorio')->with("paciente" , $paciente)->with("id_paciente", $id_paciente)
@@ -895,35 +911,37 @@ class PacienteController extends Controller
             rfp.id,
             concat(rfp.primer_nombre,' ',rfp.segundo_nombre,' ',rfp.primer_apellido,' ',rfp.segundo_apellido) nombre,
             case 
-                when 
-                    date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)) >1 
-                then 
-                    concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' años') 
-                else
-                    concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' año') 
+                    when 
+                            date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)) >1 
+                    then 
+                            concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' años') 
+                    else
+                            concat(date_part('year',age(CURRENT_DATE, rfp.fecha_nacimiento)),' año') 
             end edad,
             case 
-                when 
-                    rfp.sexo = 'M' 
-                then 
-                    'Masculino'
-                else 
-                    'Femenino'
-                end sexo, 
+                    when 
+                            rfp.sexo = 'M' 
+                    then 
+                            'Masculino'
+                    else 
+                            'Femenino'
+                    end sexo, 
             rfp.domicilio, rfp.telefono, rfp.identidad, 
-            to_char(r.created_at,'TMDay')||', '||to_char( r.created_at ,'dd')||' de '||to_char(r.created_at,'TMMonth')||' de '||to_char(r.created_at,'yyyy') fecha,
+            ds.nombre_espanol||', '||to_char( r.created_at ,'dd')||' de '||ma.nombre_espanol||' de '||to_char(r.created_at,'yyyy') fecha,
             to_char(r.created_at, 'HH12:MI AM') hora,
             ac.nombre area,
             TRIM(
-                    COALESCE(TRIM(p.primer_nombre)||' ','')||
-                    COALESCE(TRIM(p.primer_apellido||' '),'')
-                ) medico
+                            COALESCE(TRIM(p.primer_nombre)||' ','')||
+                            COALESCE(TRIM(p.primer_apellido||' '),'')
+                    ) medico
             from reg_ficha_pacientes rfp 
             join tbl_remisiones r on rfp.id = r.id_paciente
             join tbl_areas_clinica ac ON ac.id = r.id_area
             join per_empleado p ON p.id = r.id_medico
+            join cat_meses_anio ma on ma.id_mes_bd::int = to_char( r.created_at::date,'MM')::int
+            join cat_dias_semana ds on ds.id_dia_bd::text = to_char(r.created_at::date,'D')
             where rfp.deleted_at is null and r.deleted_at is null
-                and rfp.id = :id_paciente and r.id = :id_remision
+                    and rfp.id = :id_paciente and r.id = :id_remision
             ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision]))->first();
 
         return view('archivos.archivos_otros')->with("paciente" , $paciente)->with("id_paciente", $id_paciente)
@@ -934,10 +952,12 @@ class PacienteController extends Controller
 
     public function historial_examenes_laboratorio($id_paciente, $id_remision, $id_expediente){
         $examenes = DB::select("
-            SELECT id, id_paciente, id_expediente, id_remision, examen_laboratorio, url_pdf, 
-            to_char(created_at,'TMDay')||', '||to_char( created_at ,'dd')||' de '||to_char(created_at,'TMMonth')||' de '||to_char(created_at,'yyyy') fecha
-            FROM public.tbl_laboratorio
-            where deleted_at is null and
+            SELECT tl.id, id_paciente, id_expediente, id_remision, examen_laboratorio, url_pdf, 
+            ds.nombre_espanol||', '||to_char( tl.created_at ,'dd')||' de '||ma.nombre_espanol||' de '||to_char(tl.created_at,'yyyy') fecha
+            FROM public.tbl_laboratorio tl
+            join cat_meses_anio ma on ma.id_mes_bd::int = to_char( tl.created_at::date,'MM')::int
+            join cat_dias_semana ds on ds.id_dia_bd::text = to_char(tl.created_at::date,'D')
+            where tl.deleted_at is null and
             id_paciente = :id_paciente and id_remision = :id_remision and id_expediente = :id_expediente
         ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision, "id_expediente" => $id_expediente]);
 
@@ -946,10 +966,12 @@ class PacienteController extends Controller
 
     public function historial_otros_archivos($id_paciente, $id_remision, $id_expediente){
         $examenes = DB::select("
-            SELECT id, id_paciente, id_expediente, id_remision, descripcion_archivo, url_archivo, 
-            to_char(created_at,'TMDay')||', '||to_char( created_at ,'dd')||' de '||to_char(created_at,'TMMonth')||' de '||to_char(created_at,'yyyy') fecha
-            FROM public.tbl_otros_archivos
-            where deleted_at is null and
+            SELECT oa.id, id_paciente, id_expediente, id_remision, descripcion_archivo, url_archivo, 
+            ds.nombre_espanol||', '||to_char( oa.created_at ,'dd')||' de '||ma.nombre_espanol||' de '||to_char(oa.created_at,'yyyy') fecha
+            FROM public.tbl_otros_archivos oa
+            join cat_meses_anio ma on ma.id_mes_bd::int = to_char( oa.created_at::date,'MM')::int
+            join cat_dias_semana ds on ds.id_dia_bd::text = to_char(oa.created_at::date,'D')
+            where oa.deleted_at is null and
             id_paciente = :id_paciente and id_remision = :id_remision and id_expediente = :id_expediente
         ", ["id_paciente" => $id_paciente, "id_remision" => $id_remision, "id_expediente" => $id_expediente]);
 
@@ -986,7 +1008,7 @@ class PacienteController extends Controller
                     DB::select("
                     INSERT INTO public.tbl_laboratorio(
                         id_paciente, id_expediente, id_remision, examen_laboratorio, url_pdf, created_at)
-                        VALUES (:id_paciente, :id_expediente, :id_remision, :examen_laboratorio, :nombre_archivo, now());
+                        VALUES (:id_paciente, :id_expediente, :id_remision, :examen_laboratorio, :nombre_archivo, (now() at time zone 'CST'));
                     ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, 
                     "examen_laboratorio" =>  $descripcion_examen, "nombre_archivo" =>  $nombre_archivo]);
                 }else{
@@ -1021,7 +1043,7 @@ class PacienteController extends Controller
                     DB::select("
                     INSERT INTO public.tbl_otros_archivos(
                         id_paciente, id_expediente, id_remision, descripcion_archivo, url_archivo, created_at)
-                        VALUES (:id_paciente, :id_expediente, :id_remision, :descripcion_archivo, :nombre_archivo, now());
+                        VALUES (:id_paciente, :id_expediente, :id_remision, :descripcion_archivo, :nombre_archivo, (now() at time zone 'CST'));
                     ", ["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision, 
                     "descripcion_archivo" =>  $descripcion_archivo, "nombre_archivo" =>  $nombre_archivo]);
                 //}else{
@@ -1048,7 +1070,7 @@ class PacienteController extends Controller
 
             DB::select("
             UPDATE public.tbl_laboratorio
-            SET deleted_at=now()
+            SET deleted_at=(now() at time zone 'CST')
             WHERE id = :id
             ", ["id" => $id_examen]);
     
@@ -1069,7 +1091,7 @@ class PacienteController extends Controller
 
         DB::select("
         UPDATE public.tbl_otros_archivos
-        SET deleted_at=now()
+        SET deleted_at=(now() at time zone 'CST')
         WHERE id = :id
         ", ["id" => $id_archivo]);
 
@@ -1095,7 +1117,7 @@ class PacienteController extends Controller
                     DB::select("
                     INSERT INTO public.tbl_historial_clinico_fisico(
                         id_paciente, expediente_fisico, url_expediente_fisico, created_at)
-                        VALUES (:id_paciente, :examen_fisico, :nombre_archivo, now());
+                        VALUES (:id_paciente, :examen_fisico, :nombre_archivo, (now() at time zone 'CST'));
                     ", ["id_paciente" => $paciente, "examen_fisico" =>  $descripcion_examen, "nombre_archivo" =>  $nombre_archivo]);
                 }else{
                     dd("NO ES UN PDF");
@@ -1120,7 +1142,7 @@ class PacienteController extends Controller
             
             DB::select("
             UPDATE public.tbl_historial_clinico_fisico
-            SET deleted_at=now()
+            SET deleted_at=(now() at time zone 'CST')
             WHERE id = :id
             ", ["id" => $id_examen]);
 
@@ -1182,7 +1204,7 @@ class PacienteController extends Controller
         id_area,id_estado_remision,id_medico,id_paciente
         , created_at) values (
         :id_area,:id_estado_remision,:id_medico,:id_paciente
-        , now() )
+        , (now() at time zone 'CST') )
         RETURNING  id
         ", ['id_area'=>$id_area,'id_estado_remision'=>$id_estado_remision,'id_medico'=>$id_medico,'id_paciente'=>$id_paciente
         ]
@@ -1196,7 +1218,7 @@ class PacienteController extends Controller
         
         }else if($accion==2){
             
-        $sql_tbl_remisiones = DB::select("update public.tbl_remisiones set  updated_at = now(),
+        $sql_tbl_remisiones = DB::select("update public.tbl_remisiones set  updated_at = (now() at time zone 'CST'),
         id_area=:id_area,id_estado_remision=:id_estado_remision,id_medico=:id_medico,id_paciente=:id_paciente
         where id=:id"
         , ['id'=>$id,'id_area'=>$id_area,'id_estado_remision'=>$id_estado_remision,'id_medico'=>$id_medico,'id_paciente'=>$id_paciente]
@@ -1206,7 +1228,7 @@ class PacienteController extends Controller
 
         }else if($accion==3){
 
-        $sql_tbl_remisiones = DB::select("update public.tbl_remisiones set deleted_at=now() where
+        $sql_tbl_remisiones = DB::select("update public.tbl_remisiones set deleted_at=(now() at time zone 'CST') where
             id=:id
         "
         , ['id'=>$id]

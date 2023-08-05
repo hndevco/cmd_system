@@ -47,7 +47,7 @@ class EmpleadoController extends Controller
 
         if($accion==1){
         $sql_users = DB::select("insert INTO public.users (email,name,password, created_at) values (
-        :email,:usuario,:password, now() )
+        :email,:usuario,:password, (now() at time zone 'CST') )
         RETURNING  id", ['email'=>$email,'usuario'=>$usuario,'password'=>$password
         ]);
 
@@ -60,12 +60,12 @@ class EmpleadoController extends Controller
         }else if($accion==2){
 
             if($resetpassword == '1'){
-                $sql_users = DB::select("update public.users set updated_at = now(),
+                $sql_users = DB::select("update public.users set updated_at = (now() at time zone 'CST'),
                 email=:email,name=:usuario,password=:password
                 where id=:id
                 ", ['email'=>$email,'id'=>$id,'usuario'=>$usuario,'password'=>$password]);
             }else{
-                $sql_users = DB::select("update public.users set updated_at = now(),
+                $sql_users = DB::select("update public.users set updated_at = (now() at time zone 'CST'),
                 email=:email,name=:usuario
                 where id=:id
                 ", ['email'=>$email,'id'=>$id,'usuario'=>$usuario]);
@@ -77,7 +77,7 @@ class EmpleadoController extends Controller
 
         }else if($accion==3){
 
-        $sql_users = DB::select("update public.users set deleted_at=now() where
+        $sql_users = DB::select("update public.users set deleted_at=(now() at time zone 'CST') where
         id=:id", ['id'=>$id]);
 
         $msgSuccess="Registro ".$id." eliminado";
@@ -181,7 +181,7 @@ class EmpleadoController extends Controller
                 select x.email::text, x.username::text, x.password::text, x.created_at, x.name::text, true::bool forzar_cambio_contrasenia from (
                     select :email::text email, 
                     lower(substr(trim(:primer_nombre::text),1,1)||substr(coalesce(trim(:segundo_nombre::text),''),1,1)||trim(:primer_apellido::text)||substr(coalesce(trim(:segundo_apellido::text),''),1,1)||length(trim(:primer_nombre::text)||trim(:primer_apellido::text))) as username, 
-                    :password::text as password, now() created_at,
+                    :password::text as password, (now() at time zone 'CST') created_at,
                     TRIM(
                     COALESCE(TRIM(:primer_nombre::text)||' ','')||
                     COALESCE(TRIM(:segundo_nombre::text)||' ','')||
@@ -203,7 +203,7 @@ class EmpleadoController extends Controller
                 telefono,domicilio,identidad,primer_apellido,primer_nombre,segundo_apellido,segundo_nombre
                 ,correo, id_usuario, created_at, id_cargo, id_pais) values (
                 :telefono,:domicilio,:identidad,:primer_apellido,:primer_nombre,:segundo_apellido,:segundo_nombre
-                ,:correo,:id_usuario, now(), :id_cargo, :id_pais )
+                ,:correo,:id_usuario, (now() at time zone 'CST'), :id_cargo, :id_pais )
                 RETURNING  id
                 ", ['telefono'=>$telefono,'domicilio'=>$domicilio,'identidad'=>$identidad,
                     'primer_apellido'=>$primer_apellido,'primer_nombre'=>$primer_nombre,
@@ -224,7 +224,7 @@ class EmpleadoController extends Controller
             
             
         }else if($accion==2){
-        $sql_per_empleado = DB::select("update public.per_empleado set  updated_at = now(),
+        $sql_per_empleado = DB::select("update public.per_empleado set  updated_at = (now() at time zone 'CST'),
         telefono=:telefono,domicilio=:domicilio,identidad=:identidad,primer_apellido=:primer_apellido,
         primer_nombre=:primer_nombre,segundo_apellido=:segundo_apellido,segundo_nombre=:segundo_nombre,
         correo=:correo, id_cargo= :id_cargo, id_pais = :id_pais
@@ -239,7 +239,7 @@ class EmpleadoController extends Controller
 
         }else if($accion==3){
 
-        $sql_per_empleado = DB::select("update public.per_empleado set deleted_at=now() where
+        $sql_per_empleado = DB::select("update public.per_empleado set deleted_at=(now() at time zone 'CST') where
         id=:id
         "
         , ['id'=>$id]
@@ -490,8 +490,8 @@ class EmpleadoController extends Controller
 
                 if ($clave_actual_coincide == 0 && $clave_nueva_coincide == 0 ) {
                     //procede a actualizar
-                    $sql_seg_usuario_permisos=DB::select('update users set password = :clave_nueva_encriptada, 
-                            updated_at = now(), forzar_cambio_contrasenia = false where id = :id_user', 
+                    $sql_seg_usuario_permisos=DB::select("update users set password = :clave_nueva_encriptada, 
+                            updated_at = (now() at time zone 'CST'), forzar_cambio_contrasenia = false where id = :id_user", 
                         [   'id_user'=>$id_user,
                             'clave_nueva_encriptada'=>$clave_nueva_encriptada
                         ]); 
