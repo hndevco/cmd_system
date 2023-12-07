@@ -121,7 +121,7 @@ class ReportesController extends Controller
     public function ver_reporte_pediatrico($id_paciente, $id_remision, $id_expediente) {
         
         //$file = public_path('/documentos/reportes/Reporte_pediatrico.docx');
-        $file = base_path('/app/Documents/Report/Reporte_pediatrico.docx');
+        $file = base_path('app/Documents/Report/Reporte_pediatrico.docx');
         $nombre_paciente = null;
         
         try {
@@ -409,7 +409,7 @@ class ReportesController extends Controller
     public function ver_reporte_ginecologico($id_paciente, $id_remision, $id_expediente) {
         
         //$file = public_path('/documentos/reportes/Reporte_ginecologico.docx');
-        $file = base_path('/app/Documents/Report/Reporte_ginecologico.docx');
+        $file = base_path('app/Documents/Report/Reporte_ginecologico.docx');
         $nombre_paciente = null;
         
         try {
@@ -637,7 +637,7 @@ where id_paciente = :id_paciente and id_expediente = :id_expediente and id_remis
     public function ver_reporte_medicina_general($id_paciente, $id_remision, $id_expediente) {
         
         //$file = public_path('/documentos/reportes/Reporte_medicina_general.docx');
-        $file = base_path('/app/Documents/Report/Reporte_medicina_general.docx');
+        $file = base_path('app/Documents/Report/Reporte_medicina_general.docx');
         $nombre_paciente = null;
                 
         try {
