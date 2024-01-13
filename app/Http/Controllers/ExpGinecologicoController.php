@@ -178,6 +178,7 @@ class ExpGinecologicoController extends Controller
                         join public.tbl_cargos c on ep.id_cargo = c.id
                         where u.id = :id_user and ep.deleted_at is null
             ", ["id_user" => Auth()->id()]))->first();
+            $id_medico = $id_medico->id;
             //finaliza deducir medico
         //Inicia deducir expediente
         $expediente = collect(\DB::select("SELECT te.id from tbl_remisiones r
@@ -186,6 +187,7 @@ class ExpGinecologicoController extends Controller
             where r.deleted_at is null and r.id = :id_remision
         ", ["id_remision" => $id_remision]))->first();
         $id_expediente = $expediente->id;
+        //throw new Exception($id_medico, true);
         //Finaliza deducir expediente
         if($accion == 1){
             //inicia insert signos vitales

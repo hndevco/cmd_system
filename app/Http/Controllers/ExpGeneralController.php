@@ -176,6 +176,7 @@ class ExpGeneralController extends Controller
                         join public.tbl_cargos c on ep.id_cargo = c.id
                         where u.id = :id_user and ep.deleted_at is null
             ", ["id_user" => Auth()->id()]))->first();
+            $id_medico = $id_medico->id;
             //finaliza deducir medico
              //Inicia deducir expediente
              $expediente = collect(\DB::select("SELECT te.id from tbl_remisiones r
