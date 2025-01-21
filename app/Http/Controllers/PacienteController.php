@@ -669,9 +669,9 @@ class PacienteController extends Controller
             ",["id_paciente" => $id_paciente, "id_expediente" => $id_expediente, "id_remision" => $id_remision]))->first();
 
             $glasgow = collect(\DB::select(
-            "SELECT g.glasgow, g.actividad_ocular, g.respuesta_verval, g.respuesta_motora from public.tbl_mg_glasgow g
-            where g.id_paciente = :id_paciente and g.deleted_at is null
-            ",["id_paciente" => $id_paciente]))->first();
+                "SELECT g.glasgow, g.actividad_ocular, g.respuesta_verval, g.respuesta_motora from public.tbl_mg_glasgow g
+                where g.id_paciente = :id_paciente and g.deleted_at is null and g.id_remision = :id_remision
+                ",["id_paciente" => $id_paciente, "id_remision" => $id_remision]))->first();
 
             $estado_conciencia = collect(\DB::select(
                 "SELECT ec.alerta, ec.coma, ec.estupor, ec.somnoliento from public.tbl_mg_estado_conciencia ec
@@ -684,8 +684,8 @@ class PacienteController extends Controller
                 antecendetes_hospitalarios_quirurgicos, motivo_consulta, historia_enfermedad_actual, examen_fisico, diagnostico, indicaciones_tratamiento,
                 proxima_cita
                     FROM public.tbl_mg_medicina_general
-                    where id_paciente = :id_paciente and deleted_at is null
-                ",["id_paciente" => $id_paciente]))->first();
+                    where id_paciente = :id_paciente and deleted_at is null  and id_remision = :id_remision
+                ",["id_paciente" => $id_paciente, "id_remision" => $id_remision]))->first();
                 
             $receta = collect(\DB::select("
             select rm.id_paciente, rm.id_expediente, rm.id_remision,
